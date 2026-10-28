@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; connect-src ws://127.0.0.1:*; media-src 'self' blob: data:;" />
+    <title>JARVIS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- data-mode: 'text' | 'voice'  ·  data-state: booting|idle|listening|thinking|speaking|offline -->
+    <div id="app" class="app" data-mode="text" data-state="booting">
+
+      <!-- Barra superior = cabeçalho do console (drag + readouts + controles) -->
+      <header id="winbar" class="winbar">
+        <div class="winbar-left">
+          <span class="brand-node" aria-hidden="true"></span>
+          <span class="brand">J.A.R.V.I.S</span>
+          <span id="conn" class="conn conn--off" title="conexão com o backend">
+            <span class="conn-dot"></span><span id="conn-label">offline</span>
+          </span>
+        </div>
+        <div class="winbar-right">
+          <span id="clock" class="clock" title="hora do sistema">--:--:--</span>
+          <span id="mode-badge" class="mode-badge" title="Ctrl+Shift alterna">texto</span>
+          <button id="btn-viz" class="win-btn" title="abrir tela de visualizações (Ctrl+Shift+V)">◫</button>
+          <button id="btn-hide" class="win-btn" title="ocultar (Ctrl+Enter reabre)">—</button>
+          <button id="btn-quit" class="win-btn win-btn--close" title="encerrar">✕</button>
+        </div>
+      </header>
+
+      <!-- ===================== MUNDO 1: MODO TEXTO (console HUD) ===================== -->
+      <section id="text-view" class="text-view">
+        <!-- Camadas ambiente (grade, brilho, scanlines) + moldura de cantos -->
+        <div class="tv-fx" aria-hidden="true">
+          <div class="tv-glow"></div>
+          <div class="tv-grid"></div>
+          <div class="tv-scan"></div>
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+        </div>
+
+        <div id="log" class="log" aria-live="polite"></div>
+
+        <form id="composer" class="composer">
+          <span class="prompt">&gt;</span>
+          <span id="caret" class="term-caret"></span>
+          <input
+            id="input"
+            class="input"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="mic" class="mic" type="button" title="segure para falar" disabled>MIC</button>
+          <span class="scan" aria-hidden="true"></span>
+        </form>
+
+        <div id="hint" class="hint">
+          <span id="hint-dot" class="hint-dot"></span>
+          <span id="hint-text">iniciando…</span>
+          <span class="hint-kbd">CTRL+SHIFT · VOZ</span>
+        </div>
+      </section>
+
+      <!-- ===================== MUNDO 2: MODO VOZ (orbe pulsante) ===================== -->
+      <section id="voice-view" class="voice-view">
+        <canvas id="orb" class="orb"></canvas>
+        <div class="orb-aura" aria-hidden="true"></div>
+        <div id="voice-hint" class="voice-hint">carregando voz…</div>
+      </section>
+
+    </div>
+
+    <script src="orb.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>

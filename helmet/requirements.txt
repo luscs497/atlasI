@@ -1,0 +1,36 @@
+# Backend do capacete (FastAPI). Venv PRÓPRIA (helmet/.venv) para não mexer na
+# venv do JARVIS desktop. As libs compartilhadas com o backend/ estão nas mesmas
+# versões para o pacote `jarvis` (cérebro, ferramentas) rodar idêntico aqui.
+
+# --- API / servidor ---
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic-settings>=2.4
+
+# --- banco (async; SQLite local hoje, Postgres na VPS amanhã) ---
+sqlalchemy[asyncio]>=2.0.30
+aiosqlite>=0.20
+
+# --- áudio ---
+numpy==2.5.1
+webrtcvad-wheels>=2.0.14     # VAD por frame (detecção de fala)
+faster-whisper==1.2.1         # STT local
+ctranslate2==4.8.1
+av==18.0.0
+kokoro-onnx==0.5.0            # TTS local (mesma voz do desktop)
+onnxruntime==1.27.0
+piper-tts==1.4.2              # TTS fallback
+
+# --- cérebro (pacote jarvis/ do backend desktop) ---
+openai==2.45.0
+python-dotenv>=1.0
+
+# --- descoberta na rede local (ESP32 acha o PC sem IP fixo) ---
+zeroconf>=0.132
+
+# --- testes ---
+pytest>=8
+pytest-asyncio>=0.23
+httpx>=0.27
+websockets>=13
+scipy==1.18.1

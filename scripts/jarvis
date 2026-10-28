@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Launcher do JARVIS v2. Crie um alias global apontando para este arquivo:
+#   echo "alias jarvis='$HOME/projetos/jarvis-v2/scripts/jarvis'" >> ~/.bashrc
+set -euo pipefail
+
+# Diretório raiz do projeto (um nível acima de scripts/).
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+exec npm start

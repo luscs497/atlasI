@@ -1,0 +1,63 @@
+# ── Segredos (NUNCA commitar) ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+# firmware do capacete: Wi-Fi + token (use segredos.example.h como base)
+helmet/firmware/capacete/segredos.h
+
+# ── Node / Electron ──────────────────────────────────────
+node_modules/
+dist/
+out/
+npm-debug.log*
+
+# ── Python ───────────────────────────────────────────────
+.venv/
+.venv-*/
+venv/
+__pycache__/
+*.py[cod]
+.Python
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ── Dados do usuário / modelos (ficam em ~/.jarvis, mas por garantia) ──
+.jarvis/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.onnx
+*.bin
+*.pt
+*.pth
+*.safetensors
+
+# ── Áudio gerado ─────────────────────────────────────────
+*.wav
+*.mp3
+*.ogg
+*.webm
+
+# ── Arduino / PlatformIO ─────────────────────────────────
+.pio/
+build/
+
+# ── Ferramentas locais ───────────────────────────────────
+.claude/settings.local.json
+graphify-out/
+
+# ── SO / editores ────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+.vscode/
+.idea/

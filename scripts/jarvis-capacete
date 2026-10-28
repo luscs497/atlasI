@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Sobe o backend do capacete (FastAPI) — independente do JARVIS desktop.
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec "$ROOT/helmet/.venv/bin/python" "$ROOT/helmet/run.py" "$@"

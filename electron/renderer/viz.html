@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 'unsafe-inline' em script-src: necessário para o design livre (iframe srcdoc
+       sandbox herda este CSP e precisa rodar <script> inline). Esta página não tem
+       script inline próprio; o HTML do modelo fica ISOLADO no sandbox (sem acesso
+       à página nem ao preload). frame-src 'self' libera o srcdoc. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src ws://127.0.0.1:*; font-src 'self'; frame-src 'self';" />
+  <title>JARVIS · Visualizações</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --jarvis: #00D4FF;   /* ciano — primário */
+      --lucas: #00FFC8;    /* água — secundário */
+      --apoio1: #0EA5E9;
+      --apoio2: #06B6D4;
+      --texto: #E2E8F0;
+      --dim: #64748b;
+      --linha: rgba(0, 212, 255, 0.18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background: radial-gradient(1200px 700px at 50% -10%, #0d1522 0%, var(--bg) 60%);
+      color: var(--texto);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      -webkit-user-select: none; user-select: none;
+    }
+    /* moldura HUD de 4 cantos + grade sutil (mesmo DNA do modo texto) */
+    .fx { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .grid {
+      position: absolute; inset: 0; opacity: 0.35;
+      background-image:
+        linear-gradient(var(--linha) 1px, transparent 1px),
+        linear-gradient(90deg, var(--linha) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 78%);
+              mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 78%);
+    }
+    .corner { position: absolute; width: 26px; height: 26px; border: 2px solid var(--jarvis); opacity: 0.55; }
+    .corner.tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; }
+    .corner.tr { top: 14px; right: 14px; border-left: 0; border-bottom: 0; }
+    .corner.bl { bottom: 14px; left: 14px; border-right: 0; border-top: 0; }
+    .corner.br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; }
+
+    .wrap { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; padding: 34px 40px 30px; }
+    header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+    .brand { font-size: 12px; letter-spacing: 4px; color: var(--jarvis); text-transform: uppercase; opacity: 0.8; }
+    #title { font-size: 26px; font-weight: 600; letter-spacing: 0.3px; color: #fff;
+             text-shadow: 0 0 18px rgba(0, 212, 255, 0.25); }
+    #stage { flex: 1; min-height: 0; position: relative; }
+    #empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+             color: var(--dim); font-size: 15px; letter-spacing: 1px; }
+
+    /* elementos de dados */
+    svg { width: 100%; height: 100%; display: block; }
+    .axis { stroke: var(--linha); stroke-width: 1; }
+    .axis-label { fill: var(--dim); font-size: 12px; }
+    .bar-label { fill: var(--texto); font-size: 13px; }
+    .val-label { fill: #fff; font-size: 12px; font-weight: 600; }
+    .slice-label { fill: var(--texto); font-size: 12px; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; height: 100%; align-content: center; }
+    .card {
+      background: linear-gradient(160deg, rgba(0, 212, 255, 0.09), rgba(0, 255, 200, 0.04));
+      border: 1px solid var(--linha); border-radius: 14px; padding: 22px 24px;
+      box-shadow: inset 0 0 30px rgba(0, 212, 255, 0.05);
+    }
+    .card .rot { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+    .card .val { font-size: 34px; font-weight: 700; color: #fff; margin-top: 6px; }
+    .card .sub { font-size: 12px; color: var(--lucas); margin-top: 4px; }
+
+    ul.lista { list-style: none; display: flex; flex-direction: column; gap: 12px; max-height: 100%; overflow: auto; padding-right: 8px; }
+    ul.lista li { display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--linha); border-radius: 10px; }
+    ul.lista li .dot { width: 8px; height: 8px; flex: 0 0 8px; transform: rotate(45deg);
+      background: var(--jarvis); box-shadow: 0 0 10px var(--jarvis); }
+    ul.lista li .txt { font-size: 15px; color: var(--texto); }
+    ul.lista li .det { margin-left: auto; font-size: 12px; color: var(--dim); }
+  </style>
+</head>
+<body>
+  <div class="fx">
+    <div class="grid"></div>
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+  </div>
+  <div class="wrap">
+    <header>
+      <span class="brand">J.A.R.V.I.S</span>
+      <span id="title">Visualizações</span>
+    </header>
+    <div id="stage">
+      <div id="empty">Aguardando um comando de visualização, senhor…</div>
+    </div>
+  </div>
+  <script src="viz-renderer.js"></script>
+</body>
+</html>

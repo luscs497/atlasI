@@ -1,0 +1,16 @@
+{
+  "name": "jarvis-v2",
+  "version": "0.1.0",
+  "description": "JARVIS v2 — assistente pessoal estilo Iron Man para Pop!_OS",
+  "author": "Lucas",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "backend": "backend/.venv/bin/python backend/server.py --port 8765"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}
