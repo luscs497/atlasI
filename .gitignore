@@ -28,8 +28,8 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
-# ── Dados do usuário / modelos (ficam em ~/.jarvis, mas por garantia) ──
-.jarvis/
+# ── Dados do usuário / modelos (ficam em ~/.atlas, mas por garantia) ──
+.atlas/
 *.db
 *.db-journal
 *.sqlite

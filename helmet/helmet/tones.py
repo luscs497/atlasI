@@ -11,7 +11,7 @@ from __future__ import annotations
 TONES: dict[str, dict] = {
     # conectou no backend
     "ready": {"notes": [[1047, 60], [0, 40], [1568, 90]], "buzzer": "both"},
-    # ouviu "Jarvis" — escuta ativa
+    # ouviu "Atlas" — escuta ativa
     "wake": {"notes": [[880, 70], [0, 30], [1319, 70], [0, 30], [1760, 110]], "buzzer": "both"},
     # recebeu o pedido, pensando
     "ack": {"notes": [[1568, 45]], "buzzer": 0},

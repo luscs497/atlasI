@@ -1,5 +1,5 @@
 """
-Ponte JARVIS -> Claude Code: execução de tarefas de programação em modo headless.
+Ponte ATLAS -> Claude Code: execução de tarefas de programação em modo headless.
 
 Quando o cérebro identifica que um pedido é uma AÇÃO de código (criar/editar
 arquivos, refatorar, corrigir bug, montar projeto…), ele aciona esta ponte, que
@@ -7,7 +7,7 @@ roda o `claude` em modo não-interativo:
 
     claude -p "<tarefa>" --output-format json --dangerously-skip-permissions --model <m>
 
-O `--dangerously-skip-permissions` é intencional: o usuário quer que o JARVIS aja
+O `--dangerously-skip-permissions` é intencional: o usuário quer que o ATLAS aja
 sem perguntar "yes/no" a cada alteração. O escopo é limitado a uma pasta-base
 (`~/projetos` por padrão) para o agente não sair passeando pelo sistema.
 
@@ -23,7 +23,7 @@ import re
 import shutil
 from pathlib import Path
 
-from jarvis.config import save_config
+from atlas.config import save_config
 
 # Famílias de modelo que reconhecemos numa fala do usuário.
 _FAMILIES = ("opus", "sonnet", "haiku", "fable")

@@ -1,5 +1,5 @@
 """
-TTS do capacete — a MESMA voz do JARVIS desktop (Kokoro, com Piper de reserva),
+TTS do capacete — a MESMA voz do ATLAS desktop (Kokoro, com Piper de reserva),
 entregue como PCM s16le mono na taxa que o destino pedir.
 
 A resposta é falada FRASE A FRASE: a 1ª frase começa a tocar enquanto as
@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 import threading
 
-from helmet import jarvis_path  # noqa: F401  (deixa `jarvis` importável)
+from helmet import atlas_path  # noqa: F401  (deixa `atlas` importável)
 from helmet.audio.resample import resample_pcm, wav_to_pcm
 
 _EMOJI = re.compile(
@@ -125,14 +125,14 @@ class VoiceSynth:
         return resample_pcm(pcm, sr, sample_rate)
 
     @classmethod
-    def from_jarvis_config(cls, voice: str = "", lang: str = "") -> "VoiceSynth | None":
+    def from_atlas_config(cls, voice: str = "", lang: str = "") -> "VoiceSynth | None":
         """
-        Constrói com a voz configurada no `~/.jarvis/config.json` do desktop, ou
+        Constrói com a voz configurada no `~/.atlas/config.json` do desktop, ou
         com `voice`/`lang` do capacete (sobrepõe só aqui; o arquivo não muda).
         """
-        from jarvis.config import load_config
-        from jarvis.kokoro_tts import KokoroSpeaker
-        from jarvis.tts import Speaker
+        from atlas.config import load_config
+        from atlas.kokoro_tts import KokoroSpeaker
+        from atlas.tts import Speaker
 
         config = dict(load_config())
         if voice:

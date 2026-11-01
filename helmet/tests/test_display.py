@@ -8,7 +8,7 @@ import pytest
 
 from datetime import datetime
 
-from helmet.brain import HELMET_PERSONA, JarvisBrain, clock_line, persona_addendum
+from helmet.brain import HELMET_PERSONA, AtlasBrain, clock_line, persona_addendum
 from helmet.display import DisplaySpec, clean_text, fit, max_chars, to_ascii
 from tests.conftest import FakeBrain
 
@@ -130,9 +130,9 @@ class _Inner:
     _client = None
 
 
-def test_jarvis_brain_troca_o_canal_sem_acumular():
+def test_atlas_brain_troca_o_canal_sem_acumular():
     inner = _Inner()
-    brain = JarvisBrain(inner, api_key="sk-test")
+    brain = AtlasBrain(inner, api_key="sk-test")
     assert inner._system == "PERSONA BASE" + HELMET_PERSONA
     disp = persona_addendum(LCD16, speaker=False, cap=60)
     brain.set_channel(disp)
@@ -158,7 +158,7 @@ async def test_hello_sem_display_nada_muda(make_server, connect):
     dev = await connect(srv.ws_url(), hello={"fw": "0.1.0"})
     w = dev.of("welcome")[-1]
     assert w["display"] is None and w["caps"]["display"] is None
-    srv.stt.queue.append("Jarvis, que horas são?")
+    srv.stt.queue.append("Atlas, que horas são?")
     await dev.say()
     await dev.wait_for("reply")
     await asyncio.sleep(0.2)
@@ -172,7 +172,7 @@ async def test_hello_com_display_envia_quadros(make_server, connect):
     w = dev.of("welcome")[-1]
     assert w["display"] == {"cols": 16, "rows": 2, "ascii": True, "max_chars": 32,
                             "ttl_ms": 8000, "reply_style": "display"}
-    srv.stt.queue.append("Jarvis, que horas são?")
+    srv.stt.queue.append("Atlas, que horas são?")
     await dev.say()
     rep = await dev.wait_for("reply")
     frame = await dev.wait_for("display", kind="reply")
@@ -191,14 +191,14 @@ async def test_hello_com_display_envia_quadros(make_server, connect):
     from tests.test_flow import api, until
     convs = await until(lambda: api(srv, "/api/conversations")["items"])
     its = api(srv, f"/api/conversations/{convs[0]['id']}/interactions")
-    assert its[0]["jarvis"] == rep["text"]
+    assert its[0]["atlas"] == rep["text"]
 
 
 async def test_display_com_alto_falante_usa_persona_de_voz(make_server, connect):
     srv = make_server(brain=ChannelBrain())
     dev = await connect(srv.ws_url(), hello={"speaker": True, "display": {"cols": 21, "rows": 5}})
     assert dev.of("welcome")[-1]["display"]["reply_style"] == "voice"
-    srv.stt.queue.append("Jarvis, oi")
+    srv.stt.queue.append("Atlas, oi")
     await dev.say()
     await dev.wait_for("display", kind="reply")
     assert srv.brain.channels[-1].startswith(HELMET_PERSONA)
@@ -207,7 +207,7 @@ async def test_display_com_alto_falante_usa_persona_de_voz(make_server, connect)
 async def test_cerebro_falhando_mostra_nao_consegui(make_server, connect):
     srv = make_server(brain=ChannelBrain(fail=True))
     dev = await connect(srv.ws_url(), hello={"display": {"cols": 16, "rows": 2}})
-    srv.stt.queue.append("Jarvis, manda a mensagem")
+    srv.stt.queue.append("Atlas, manda a mensagem")
     await dev.say()
     frame = await dev.wait_for("display", kind="reply")
     assert frame["lines"] == ["Nao consegui."]
@@ -223,7 +223,7 @@ async def test_display_invalido_vira_sem_display(make_server, connect):
 async def test_capacete_em_ingles_quadros_e_erro(make_server, connect):
     srv = make_server(brain=ChannelBrain(fail=True), language="en")
     dev = await connect(srv.ws_url(), hello={"display": {"cols": 16, "rows": 2}})
-    srv.stt.queue.append("Jarvis, send the message")
+    srv.stt.queue.append("Atlas, send the message")
     await dev.say()
     frame = await dev.wait_for("display", kind="reply")
     assert frame["lines"] == ["Couldn't do it."]

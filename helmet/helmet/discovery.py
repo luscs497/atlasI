@@ -1,9 +1,9 @@
 """
 Anúncio mDNS/Zeroconf: o ESP32 descobre o PC sem IP fixo.
 
-Serviço `_jarvis-helmet._tcp.local.` (porta do backend, TXT path=/ws/device).
-No firmware: `MDNS.queryService("jarvis-helmet", "tcp")` — ou, mais simples,
-resolver o host `jarvis.local`.
+Serviço `_atlas-helmet._tcp.local.` (porta do backend, TXT path=/ws/device).
+No firmware: `MDNS.queryService("atlas-helmet", "tcp")` — ou, mais simples,
+resolver o host `atlas.local`.
 """
 
 from __future__ import annotations
@@ -50,8 +50,8 @@ async def start_mdns(settings: Settings) -> _Handle | None:
         return None
     name = settings.mdns_name
     info = ServiceInfo(
-        "_jarvis-helmet._tcp.local.",
-        f"{name}._jarvis-helmet._tcp.local.",
+        "_atlas-helmet._tcp.local.",
+        f"{name}._atlas-helmet._tcp.local.",
         addresses=[socket.inet_aton(ip)],
         port=settings.port,
         properties={"path": "/ws/device", "auth": "token" if settings.token else "none"},

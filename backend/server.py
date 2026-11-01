@@ -1,10 +1,10 @@
 """
-JARVIS v2 — servidor backend (WebSocket local).
+ATLAS I — servidor backend (WebSocket local).
 
 Passo 1: estabelece o canal de comunicação com a UI Electron via WebSocket
 em 127.0.0.1.
 Passo 3: dá "cérebro" ao backend — as mensagens do usuário vão para a API do
-Gemini (`jarvis.gemini.GeminiBrain`). Se não houver GEMINI_API_KEY, o backend
+Gemini (`atlas.gemini.GeminiBrain`). Se não houver GEMINI_API_KEY, o backend
 volta ao modo eco (placeholder).
 Passo 4: voz — STT (faster-whisper) transcreve o áudio gravado pela UI e TTS
 (Piper) devolve a resposta falada. Modelos carregam em segundo plano após o
@@ -29,23 +29,23 @@ import websockets
 from dotenv import load_dotenv
 from websockets.asyncio.server import ServerConnection
 
-from jarvis import __version__
-from jarvis.config import load_config, save_config
-from jarvis.gemini import GeminiBrain
-from jarvis.openai_brain import OpenAIBrain
-from jarvis.elevenlabs_tts import ElevenSpeaker
-from jarvis.kokoro_tts import KokoroSpeaker
-from jarvis.claude_code import ClaudeCoder
-from jarvis.oraculo import Oracle
-from jarvis.perplexity import Perplexity
-from jarvis.tasks import TaskStore
-from jarvis.timetrack import TimeTracker
-from jarvis.financas import FinanceStore
-from jarvis.habitos import HabitStore
-from jarvis.segundo_cerebro import SecondBrain
-from jarvis.visualizacoes import VizStore
-from jarvis.stt import Transcriber
-from jarvis.tts import Speaker
+from atlas import __version__
+from atlas.config import load_config, save_config
+from atlas.gemini import GeminiBrain
+from atlas.openai_brain import OpenAIBrain
+from atlas.elevenlabs_tts import ElevenSpeaker
+from atlas.kokoro_tts import KokoroSpeaker
+from atlas.claude_code import ClaudeCoder
+from atlas.oraculo import Oracle
+from atlas.perplexity import Perplexity
+from atlas.tasks import TaskStore
+from atlas.timetrack import TimeTracker
+from atlas.financas import FinanceStore
+from atlas.habitos import HabitStore
+from atlas.segundo_cerebro import SecondBrain
+from atlas.visualizacoes import VizStore
+from atlas.stt import Transcriber
+from atlas.tts import Speaker
 
 # Tipo do cérebro: qualquer provedor com a mesma interface (reply/proactive/...).
 Brain = GeminiBrain | OpenAIBrain
@@ -68,7 +68,7 @@ SPEAKER: Voice | None = None
 CLIENTS: set[ServerConnection] = set()
 
 # Estado para a proatividade (assistente de usuário único → globais simples).
-CURRENT_MODE = "text"        # modo atual da UI (texto/voz) — decide se JARVIS fala
+CURRENT_MODE = "text"        # modo atual da UI (texto/voz) — decide se ATLAS fala
 BUSY = False                 # há um turno em andamento? (não interromper)
 LAST_ACTIVITY = time.time()  # última interação — janela de silêncio antes de agir
 
@@ -193,7 +193,7 @@ async def handle_audio(
     except Exception as exc:
         print(f"[erro] falha no STT: {exc!r}", flush=True)
         await websocket.send(
-            _encode("message", {"from": "jarvis", "text": "Não entendi o áudio, senhor."})
+            _encode("message", {"from": "atlas", "text": "Não entendi o áudio, senhor."})
         )
         return
 
@@ -240,7 +240,7 @@ async def handle_user_message(
             _encode(
                 "message",
                 {
-                    "from": "jarvis",
+                    "from": "atlas",
                     "text": f"Certo, senhor. Encaminhando ao Claude Code em '{proj}'…",
                     "info": True,
                 },
@@ -275,7 +275,7 @@ async def handle_user_message(
                 "Verifique a conexão ou a chave de API e tente novamente."
             )
 
-    await websocket.send(_encode("message", {"from": "jarvis", "text": reply}))
+    await websocket.send(_encode("message", {"from": "atlas", "text": reply}))
 
     if speak and SPEAKER is not None:
         try:
@@ -300,7 +300,7 @@ def _tempo_contexto() -> str:
 
 
 async def _do_proactive() -> None:
-    """Gera uma iniciativa do JARVIS e a envia (texto e, no modo voz, falada)."""
+    """Gera uma iniciativa do ATLAS e a envia (texto e, no modo voz, falada)."""
     global BUSY, LAST_ACTIVITY
     BUSY = True
     try:
@@ -308,7 +308,7 @@ async def _do_proactive() -> None:
         if not text:
             return
         await _broadcast(
-            _encode("message", {"from": "jarvis", "text": text, "proactive": True})
+            _encode("message", {"from": "atlas", "text": text, "proactive": True})
         )
         if CURRENT_MODE == "voice" and SPEAKER is not None:
             try:
@@ -329,7 +329,7 @@ async def _do_proactive() -> None:
 
 async def proactive_loop(config: dict, stop: asyncio.Event) -> None:
     """
-    De tempos em tempos (intervalo aleatório entre min e max minutos), o JARVIS
+    De tempos em tempos (intervalo aleatório entre min e max minutos), o ATLAS
     puxa a conversa — mas só se houver cliente conectado, ele não estiver ocupado
     e o usuário estiver quieto há pelo menos `min` minutos. `min<=0` desativa.
     """
@@ -383,7 +383,7 @@ def _make_brain(config: dict) -> Brain | None:
     if provider == "gemini":
         return GeminiBrain.from_config(config)
     # Padrão atual: OpenAI (gpt-4o-mini) — com a ponte para o Claude Code, que dá
-    # ao JARVIS o poder de EXECUTAR tarefas de programação (ações).
+    # ao ATLAS o poder de EXECUTAR tarefas de programação (ações).
     coder = ClaudeCoder.from_config(config)
     if coder is not None and coder.available():
         print(
@@ -394,13 +394,13 @@ def _make_brain(config: dict) -> Brain | None:
     else:
         print("[boot] Claude Code indisponível (só conversa).", flush=True)
 
-    # Sistema de tarefas (banco local): dá ao JARVIS gestão das listas
-    # Trabalho/Pessoal. Não precisa de chave externa — só do banco em ~/.jarvis.
+    # Sistema de tarefas (banco local): dá ao ATLAS gestão das listas
+    # Trabalho/Pessoal. Não precisa de chave externa — só do banco em ~/.atlas.
     tasks = None
     if config.get("tasks_enabled", True):
         try:
             tasks = TaskStore()
-            print("[boot] Tarefas prontas (Trabalho/Pessoal em jarvis.db).", flush=True)
+            print("[boot] Tarefas prontas (Trabalho/Pessoal em atlas.db).", flush=True)
         except Exception as exc:  # banco indisponível não pode derrubar o boot
             print(f"[boot] Tarefas indisponíveis: {exc!r}", flush=True)
 
@@ -497,7 +497,7 @@ def _make_embedder(config: dict):
 def _make_speaker(config: dict) -> Voice | None:
     """
     Cria a voz conforme `tts_engine`. Com `elevenlabs`, usa a voz premium e mantém
-    o Piper local como fallback (para a cota grátis acabar sem deixar o JARVIS
+    o Piper local como fallback (para a cota grátis acabar sem deixar o ATLAS
     mudo). Sem chave do ElevenLabs, cai direto no Piper.
     """
     piper: Speaker | None = None
@@ -517,7 +517,7 @@ def _make_speaker(config: dict) -> Voice | None:
 
     if engine == "xtts":
         try:
-            from jarvis.xtts_tts import XTTSSpeaker
+            from atlas.xtts_tts import XTTSSpeaker
             xtts = XTTSSpeaker.from_config(config, fallback=piper)
             if xtts is not None:
                 print(f"[voz] XTTS pronto: {xtts.label}.", flush=True)
@@ -648,7 +648,7 @@ class VoiceController:
 
 
 async def main() -> None:
-    parser = argparse.ArgumentParser(description="JARVIS v2 backend")
+    parser = argparse.ArgumentParser(description="ATLAS I backend")
     parser.add_argument("--port", type=int, default=8765, help="porta do WebSocket")
     args = parser.parse_args()
 
@@ -672,7 +672,7 @@ async def main() -> None:
 
     stop = asyncio.Event()
 
-    # Proatividade: JARVIS puxa a conversa de tempos em tempos.
+    # Proatividade: ATLAS puxa a conversa de tempos em tempos.
     if BRAIN is not None:
         asyncio.create_task(proactive_loop(config, stop))
 
@@ -692,7 +692,7 @@ async def main() -> None:
         handle_client, HOST, args.port, max_size=16 * 1024 * 1024
     ):
         # A UI (main.js) aguarda exatamente esta linha no stdout.
-        print(f"JARVIS_BACKEND_READY {HOST}:{args.port}", flush=True)
+        print(f"ATLAS_BACKEND_READY {HOST}:{args.port}", flush=True)
         await stop.wait()
 
     print("[boot] backend encerrado.", flush=True)

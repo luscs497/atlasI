@@ -1,5 +1,5 @@
 """
-Voz do JARVIS (TTS) — síntese de fala local via Piper.
+Voz do ATLAS (TTS) — síntese de fala local via Piper.
 
 Local/gratuito e offline, espelhando a escolha provisória do cérebro (Gemini).
 O `tts_engine=elevenlabs` da config é o alvo futuro; para trocar, basta um
@@ -15,7 +15,7 @@ import io
 import wave
 from pathlib import Path
 
-MODELS_DIR = Path.home() / ".jarvis" / "models" / "piper"
+MODELS_DIR = Path.home() / ".atlas" / "models" / "piper"
 
 
 class Speaker:

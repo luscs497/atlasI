@@ -1,6 +1,6 @@
 # Backend do capacete (FastAPI). Venv PRÓPRIA (helmet/.venv) para não mexer na
-# venv do JARVIS desktop. As libs compartilhadas com o backend/ estão nas mesmas
-# versões para o pacote `jarvis` (cérebro, ferramentas) rodar idêntico aqui.
+# venv do ATLAS desktop. As libs compartilhadas com o backend/ estão nas mesmas
+# versões para o pacote `atlas` (cérebro, ferramentas) rodar idêntico aqui.
 
 # --- API / servidor ---
 fastapi>=0.115
@@ -21,7 +21,7 @@ kokoro-onnx==0.5.0            # TTS local (mesma voz do desktop)
 onnxruntime==1.27.0
 piper-tts==1.4.2              # TTS fallback
 
-# --- cérebro (pacote jarvis/ do backend desktop) ---
+# --- cérebro (pacote atlas/ do backend desktop) ---
 openai==2.45.0
 python-dotenv>=1.0
 

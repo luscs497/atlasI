@@ -1,5 +1,5 @@
 """
-Oráculo: JARVIS consulta o Claude quando não sabe algo.
+Oráculo: ATLAS consulta o Claude quando não sabe algo.
 
 O cérebro de rotina é barato (gpt-4o-mini). Quando ele não tem uma informação,
 fica em dúvida, ou a pergunta exige raciocínio mais profundo, ele encaminha a
@@ -21,7 +21,7 @@ import tempfile
 # Enquadra a pergunta para o Claude responder direto, ciente de que é consultado
 # por outro assistente (evita preâmbulos do tipo "claro, aqui está…").
 _MOLDURA = (
-    "Você está sendo consultado como ORÁCULO por outro assistente de IA (o JARVIS), "
+    "Você está sendo consultado como ORÁCULO por outro assistente de IA (o ATLAS), "
     "que encaminha o que não sabe. Responda de forma direta, precisa e concisa, sem "
     "preâmbulo e sem se apresentar. Se não tiver certeza, diga o que é provável e o "
     "que é incerto. Pergunta:\n\n{pergunta}"
@@ -55,7 +55,7 @@ class Oracle:
         print(f"[oraculo] {self.model}: {pergunta[:80]}{'…' if len(pergunta) > 80 else ''}",
               flush=True)
         # Pasta temporária isolada — o oráculo não deve tocar nos projetos.
-        with tempfile.TemporaryDirectory(prefix="jarvis-oraculo-") as cwd:
+        with tempfile.TemporaryDirectory(prefix="atlas-oraculo-") as cwd:
             try:
                 proc = await asyncio.create_subprocess_exec(
                     *cmd, cwd=cwd,

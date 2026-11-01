@@ -1,5 +1,5 @@
 /* ============================================================
-   JARVIS v2 — DNA visual único (azul tech + verde-água, mono)
+   ATLAS I — DNA visual único (azul tech + verde-água, mono)
    · modo texto  = console HUD (feed de sistema num trilho luminoso)
    · modo voz    = orbe HUD fullscreen (intacto)
    Paleta fria: #00D4FF (ciano) + #00FFC8 (água) sobre #0a0a0f.
@@ -189,13 +189,13 @@ html, body {
 .turn-time { font-size: 0.6rem; letter-spacing: 1px; color: var(--text-mute); font-variant-numeric: tabular-nums; }
 .turn-name { font-size: 0.63rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
 .turn--user  .turn-name { color: var(--aqua); }
-.turn--jarvis .turn-name { color: var(--cyan); text-shadow: 0 0 10px rgba(0, 212, 255, 0.35); }
+.turn--atlas .turn-name { color: var(--cyan); text-shadow: 0 0 10px rgba(0, 212, 255, 0.35); }
 
 .turn-body { color: var(--text); font-size: 0.9rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
 .turn--system .turn-body { color: var(--text-mute); font-size: 0.76rem; line-height: 1.5; }
 .turn--system .turn-body::before { content: "// "; color: var(--text-mute); }
 
-/* Cursor de digitação (typewriter) das respostas do JARVIS */
+/* Cursor de digitação (typewriter) das respostas do ATLAS */
 .turn-body.typing::after {
   content: "▋"; color: var(--cyan); margin-left: 1px;
   text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);

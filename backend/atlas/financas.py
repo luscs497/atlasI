@@ -1,9 +1,9 @@
 """
-Controle de finanças pessoais do JARVIS.
+Controle de finanças pessoais do ATLAS.
 
 O usuário registra gastos por voz e recebe um resumo por categoria:
 
-    "Jarvis, gastei 50 reais no mercado"   -> registra o gasto
+    "Atlas, gastei 50 reais no mercado"   -> registra o gasto
     "quanto gastei esse mês?"              -> relatório por categoria
 
 Foco em simplicidade: um lançamento tem valor (R$), categoria e uma descrição
@@ -11,7 +11,7 @@ opcional. O relatório soma por categoria no período (mês atual por padrão, c
 pede o escopo). As categorias são reaproveitadas (normalizadas em minúsculas)
 para o resumo não fragmentar 'Mercado' e 'mercado'.
 
-Persiste no banco compartilhado `~/.jarvis/jarvis.db` (ver `jarvis.db`), a mesma
+Persiste no banco compartilhado `~/.atlas/atlas.db` (ver `atlas.db`), a mesma
 fundação das tarefas e do rastreamento de tempo.
 """
 
@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from jarvis.db import connect
+from atlas.db import connect
 
 PERIODOS = ("hoje", "ontem", "semana", "mes", "ano")
 

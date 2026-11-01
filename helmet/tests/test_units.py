@@ -20,14 +20,14 @@ from helmet.wake import find_wake, is_sleep_command, strip_leading_wake
 # ---- wake word ------------------------------------------------------------
 
 @pytest.mark.parametrize("text,command", [
-    ("Jarvis", ""),
-    ("Jarvis.", ""),
-    ("Jarvis, que horas são?", "que horas são?"),
-    ("ok jarvis abre o spotify", "abre o spotify"),
-    ("Ei, Djarvis, tudo bem?", "tudo bem?"),
-    ("Jarves, liga a luz", "liga a luz"),
-    ("JARVIS! Qual a cotação do dólar", "Qual a cotação do dólar"),
-    ("Jarbis me lembra de pagar a conta", "me lembra de pagar a conta"),
+    ("Atlas", ""),
+    ("Atlas.", ""),
+    ("Atlas, que horas são?", "que horas são?"),
+    ("ok atlas abre o spotify", "abre o spotify"),
+    ("Ei, Hatlas, tudo bem?", "tudo bem?"),
+    ("Atles, liga a luz", "liga a luz"),
+    ("ATLAS! Qual a cotação do dólar", "Qual a cotação do dólar"),
+    ("Átlas me lembra de pagar a conta", "me lembra de pagar a conta"),
 ])
 def test_wake_detecta(text, command):
     m = find_wake(text)
@@ -35,18 +35,18 @@ def test_wake_detecta(text, command):
 
 
 @pytest.mark.parametrize("text", [
-    "que horas são", "o jardim está bonito", "pega a jarra", "Marcos", "", "jarros",
+    "que horas são", "ficou lá atrás", "as notas estão altas", "Marcos", "", "as salas",
 ])
 def test_wake_nao_detecta(text):
     assert find_wake(text) is None
 
 
 def test_strip_leading_wake():
-    assert strip_leading_wake("Jarvis, e amanhã?") == "e amanhã?"
+    assert strip_leading_wake("Atlas, e amanhã?") == "e amanhã?"
     assert strip_leading_wake("e amanhã?") == "e amanhã?"
     # nome no meio de uma frase longa não é cortado
-    assert strip_leading_wake("eu acho que o seu nome jarvis é legal") == \
-        "eu acho que o seu nome jarvis é legal"
+    assert strip_leading_wake("eu acho que o seu nome atlas é legal") == \
+        "eu acho que o seu nome atlas é legal"
 
 
 @pytest.mark.parametrize("text,ok", [
@@ -194,19 +194,19 @@ async def service(tmp_path):
 
 
 async def test_recuperacao_apos_queda(service):
-    o = await service.open_session("cap", "Jarvis")
+    o = await service.open_session("cap", "Atlas")
     await service.record_interaction(o.session_id, "x" * 80, "y" * 80)
     # processo "morre" aqui: a escuta fica aberta. No boot seguinte:
     await service.recover()
     await service.drain()
     assert service.summ.calls  # conversa cheia foi encerrada e resumida
-    o2 = await service.open_session("cap", "Jarvis")
+    o2 = await service.open_session("cap", "Atlas")
     assert o2.new_conversation and o2.conversation_id != o.conversation_id
 
 
 async def test_resumo_falho_e_retomado(service):
     service.summ.fail = True
-    o = await service.open_session("cap", "Jarvis")
+    o = await service.open_session("cap", "Atlas")
     await service.record_interaction(o.session_id, "a" * 90, "b" * 90)
     assert await service.close_session(o.session_id, "timeout") == o.conversation_id
     await service.drain()
@@ -278,9 +278,9 @@ def test_piso_de_ruido_ignora_chiado_constante_e_pega_voz():
 # ---- inglês ---------------------------------------------------------------
 
 @pytest.mark.parametrize("text,expected", [
-    ("That's all, thanks.", True), ("Go to sleep, Jarvis.", True), ("Stand down.", True),
+    ("That's all, thanks.", True), ("Go to sleep, Atlas.", True), ("Stand down.", True),
     ("You can go to sleep", True), ("Goodbye!", True),
-    ("You can return to sleep.", True), ("Go back to sleep, Jarvis", True),
+    ("You can return to sleep.", True), ("Go back to sleep, Atlas", True),
     ("Shut down the computer", False), ("I need to sleep more", False),
 ])
 def test_comando_de_dormir_em_ingles(text, expected):
@@ -288,14 +288,14 @@ def test_comando_de_dormir_em_ingles(text, expected):
 
 
 def test_wake_em_ingles():
-    m = find_wake("Jarvis, what time is it?")
+    m = find_wake("Atlas, what time is it?")
     assert m is not None and m.command == "what time is it?"
 
 
 def test_alucinacoes_em_ingles():
     assert is_hallucination("Thank you.") and is_hallucination("Thanks for watching!")
-    assert is_hallucination("A conversation in English with the personal assistant JARVIS. "
-                            "Jarvis, what time is it?")
+    assert is_hallucination("A conversation in English with the personal assistant ATLAS. "
+                            "Atlas, what time is it?")
     assert not is_hallucination("What's the weather like?")
 
 

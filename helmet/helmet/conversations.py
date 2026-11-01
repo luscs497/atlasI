@@ -2,7 +2,7 @@
 Regras de negócio das conversas do capacete.
 
 1. Toda interação (fala → resposta) é gravada na conversa ABERTA do dispositivo.
-2. Uma conversa atravessa várias escutas ("Jarvis" … 2 min de AFK) até o seu
+2. Uma conversa atravessa várias escutas ("Atlas" … 2 min de AFK) até o seu
    tamanho (`size_bytes`, texto UTF-8) atingir `conversation_max_bytes`.
 3. O limite NUNCA corta uma escuta ao vivo: se estourar no meio, a conversa
    continua a mesma e só é encerrada quando a escuta terminar.
@@ -273,7 +273,7 @@ class ConversationService:
                     .order_by(Interaction.id)
                 )
             ).all()
-        return "\n".join(f"Usuário: {u}\nJARVIS: {a}" for u, a in rows)
+        return "\n".join(f"Usuário: {u}\nATLAS: {a}" for u, a in rows)
 
     # ---- boot -------------------------------------------------------------
 

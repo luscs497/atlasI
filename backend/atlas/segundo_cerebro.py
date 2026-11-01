@@ -1,7 +1,7 @@
 """
-Segundo cérebro do JARVIS — ideias conectadas ao longo do tempo.
+Segundo cérebro do ATLAS — ideias conectadas ao longo do tempo.
 
-O usuário compartilha ideias, pensamentos, planos e insights; o JARVIS os guarda
+O usuário compartilha ideias, pensamentos, planos e insights; o ATLAS os guarda
 e, quando um tema volta, resgata o que já foi pensado ("isso lembra algo que o
 senhor mencionou há 3 semanas sobre X"). A conexão é SEMÂNTICA: cada ideia ganha
 um embedding e a busca é por similaridade de cosseno — assim "meu app de gastos"
@@ -14,7 +14,7 @@ O embedder é injetado (async `callable(texto)->list[float]`), para o módulo n�
 depender de um provedor específico e ser testável com um embedder falso. Sem
 embedder (ou se a API falhar), a busca cai para correspondência por palavra-chave.
 
-Persiste no banco compartilhado `~/.jarvis/jarvis.db` (ver `jarvis.db`).
+Persiste no banco compartilhado `~/.atlas/atlas.db` (ver `atlas.db`).
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ import json
 import math
 from datetime import datetime
 
-from jarvis.db import connect
+from atlas.db import connect
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS ideas (

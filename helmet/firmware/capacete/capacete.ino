@@ -1,4 +1,4 @@
-// Capacete -> JARVIS | fw 0.3.1
+// Capacete -> ATLAS | fw 0.3.1
 // Abra ESTA pasta na Arduino IDE (Arquivo > Abrir > capacete.ino) e faça o upload.
 // Wi-Fi e token ficam em segredos.h (mesma pasta).
 #include <Arduino.h>
@@ -14,7 +14,7 @@
 // ====================== CONFIGURE AQUI ======================
 const char *DEVICE_ID = "capacete-01";
 
-const char *SERVER_HOST = "jarvis";               // procura jarvis.local por mDNS
+const char *SERVER_HOST = "atlas";               // procura atlas.local por mDNS
 const char *SERVER_IP_FALLBACK = "192.168.0.3";   // usado se o mDNS falhar
 const uint16_t SERVER_PORT = 8770;
 
@@ -36,7 +36,7 @@ const int PIN_I2S_SD = 33;
 const int PIN_SDA = 26;  // display
 const int PIN_SCL = 27;  // display
 const int PIN_BTN = 0;   // botao BOOT da placa
-const int PIN_LED = 2;   // LED azul da placa (aceso = JARVIS escutando)
+const int PIN_LED = 2;   // LED azul da placa (aceso = ATLAS escutando)
 
 // ---------- Audio ----------
 const int MIC_RATE = 16000;
@@ -54,7 +54,7 @@ bool micOk = false;
 WebSocketsClient ws;
 String wsPath;
 bool wsOk = false;
-bool jarvisActive = false;
+bool atlasActive = false;
 uint32_t wsLastOk = 0;
 uint32_t lastResolve = 0;
 uint32_t lastWifiTry = 0;
@@ -81,7 +81,7 @@ bool lcdOk = false;
 const uint8_t LCD_BL = 0x08, LCD_EN = 0x04, LCD_RS = 0x01;
 char lcdCache[4][21];
 
-char msg[4][21];           // mensagem atual do JARVIS
+char msg[4][21];           // mensagem atual do ATLAS
 uint32_t msgUntil = 0;     // ate quando mostrar a mensagem (0 = nenhuma)
 bool msgFixa = false;      // ttl_ms = 0: fica ate o proximo quadro
 bool backendDisplay = false;  // true depois que o backend mandar a 1a mensagem "display"
@@ -260,7 +260,7 @@ void mostrarTexto(const char *texto, uint32_t ttl) {
   msgUntil = millis() + ttl;
 }
 
-// Tela padrao (quando nao ha mensagem): status da conexao e do JARVIS
+// Tela padrao (quando nao ha mensagem): status da conexao e do ATLAS
 void telaAtualizar() {
   if (!lcdOk) return;
   if (msgFixa || (msgUntil && (int32_t)(millis() - msgUntil) < 0)) {
@@ -269,13 +269,13 @@ void telaAtualizar() {
   }
   msgUntil = 0;
   if (WiFi.status() != WL_CONNECTED) {
-    lcdLine(0, "JARVIS offline");
+    lcdLine(0, "ATLAS offline");
     lcdLine(1, "Sem WiFi");
   } else if (!wsOk) {
-    lcdLine(0, "JARVIS offline");
+    lcdLine(0, "ATLAS offline");
     lcdLine(1, "Conectando...");
   } else {
-    lcdLine(0, "JARVIS online");
+    lcdLine(0, "ATLAS online");
     lcdLine(1, estadoTxt);
   }
   for (int r = 2; r < LCD_ROWS; r++) lcdLine(r, "");
@@ -470,13 +470,13 @@ void tratarJson(const char *txt, size_t len) {
     toneActive = noteCount > 0;
     Serial.printf("[bipe] %s (%d notas)\n", (const char *)(doc["name"] | "?"), noteCount);
   } else if (!strcmp(type, "state")) {
-    jarvisActive = doc["active"] | false;
+    atlasActive = doc["active"] | false;
     const char *st = doc["state"] | "";
     if (!strcmp(st, "idle")) estadoTxt = "Dormindo";
     else if (!strcmp(st, "listening")) estadoTxt = "Ouvindo...";
     else if (!strcmp(st, "thinking")) estadoTxt = "Pensando...";
     else if (!strcmp(st, "speaking")) estadoTxt = "Falando...";
-    Serial.printf("[estado] %s | ativo=%d | dorme em %ds\n", st, (int)jarvisActive, (int)(doc["expires_in"] | 0));
+    Serial.printf("[estado] %s | ativo=%d | dorme em %ds\n", st, (int)atlasActive, (int)(doc["expires_in"] | 0));
   } else if (!strcmp(type, "transcript")) {
     const char *t = doc["text"] | "";
     Serial.printf("[voce] %s\n", t);
@@ -487,7 +487,7 @@ void tratarJson(const char *txt, size_t len) {
     }
   } else if (!strcmp(type, "reply")) {
     const char *t = doc["text"] | "";
-    Serial.printf("[jarvis] %s\n", t);
+    Serial.printf("[atlas] %s\n", t);
     if (!backendDisplay) mostrarTexto(t, 8000);  // fallback: backend ainda nao manda "display"
   } else if (!strcmp(type, "display")) {
     backendDisplay = true;
@@ -537,7 +537,7 @@ void onWsEvent(WStype_t type, uint8_t *payload, size_t length) {
     case WStype_DISCONNECTED:
       if (wsOk) Serial.println("[ws] desconectado");
       wsOk = false;
-      jarvisActive = false;
+      atlasActive = false;
       msgFixa = false;
       estadoTxt = "Dormindo";
       break;
@@ -592,7 +592,7 @@ void imprimirStats() {
 void setup() {
   Serial.begin(115200);
   delay(500);
-  Serial.println("\n=== Capacete -> JARVIS | fw 0.3.1 ===");
+  Serial.println("\n=== Capacete -> ATLAS | fw 0.3.1 ===");
 
   pinMode(PIN_BTN, INPUT_PULLUP);
   pinMode(PIN_LED, OUTPUT);
@@ -625,7 +625,7 @@ void setup() {
   ws.setReconnectInterval(2000);
   wsLastOk = millis();
   if (WiFi.status() == WL_CONNECTED) {
-    telaBoot("Achando o PC...", "jarvis.local");
+    telaBoot("Achando o PC...", "atlas.local");
     iniciarWs();
   }
   statT0 = millis();
@@ -638,7 +638,7 @@ void loop() {
   tonePump();
   botaoLer();
   telaAtualizar();
-  digitalWrite(PIN_LED, (wsOk && jarvisActive) ? HIGH : LOW);
+  digitalWrite(PIN_LED, (wsOk && atlasActive) ? HIGH : LOW);
 
   // Servidor sumiu por mais de 20 s? Procura de novo (o IP do PC pode ter mudado).
   if (WiFi.status() == WL_CONNECTED && !wsOk && millis() - wsLastOk > 20000 && millis() - lastResolve > 20000) {

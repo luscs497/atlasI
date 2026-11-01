@@ -3,14 +3,14 @@
  * Renderer da 2ª janela (tela de visualizações). Recebe specs normalizados do
  * backend via WebSocket (mensagem `visualization`) e os desenha SEM dependências
  * externas: SVG para gráficos/mapa mental, DOM para kpis/lista. Mesmo DNA HUD do
- * resto do JARVIS (ciano/água sobre fundo quase-preto).
+ * resto do ATLAS (ciano/água sobre fundo quase-preto).
  *
  * Expõe `window.Viz.render(spec)` para permitir verificação offscreen.
  */
 (function () {
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const PALETTE = ['#00D4FF', '#00FFC8', '#0EA5E9', '#06B6D4', '#38bdf8', '#5eead4', '#818cf8', '#22d3ee'];
-  const JARVIS = '#00D4FF', AGUA = '#00FFC8', DIM = '#64748b', TEXT = '#E2E8F0';
+  const ATLAS = '#00D4FF', AGUA = '#00FFC8', DIM = '#64748b', TEXT = '#E2E8F0';
 
   const $stage = () => document.getElementById('stage');
   const $title = () => document.getElementById('title');
@@ -49,20 +49,20 @@
     if (draw) draw(spec, stage);
   }
 
-  // ---- design livre (HTML gerado pelo JARVIS, isolado em iframe) ----------
+  // ---- design livre (HTML gerado pelo ATLAS, isolado em iframe) ----------
   async function renderHtml(spec, stage) {
     const frame = document.createElement('iframe');
     // sandbox SEM allow-same-origin: origem opaca, sem acesso à página principal
-    // nem ao preload (window.jarvis). allow-scripts libera JS/Canvas/animações.
+    // nem ao preload (window.atlas). allow-scripts libera JS/Canvas/animações.
     frame.setAttribute('sandbox', 'allow-scripts');
     frame.style.cssText = 'width:100%;height:100%;border:0;background:transparent;display:block;';
     // Bibliotecas pedidas (Chart.js/D3) injetadas INLINE, antes do HTML do modelo.
     // A fonte vem do processo main via IPC (o renderer é sandboxed); nada de rede.
     let libs = '';
-    if (Array.isArray(spec.libs) && window.jarvis && window.jarvis.libSource) {
+    if (Array.isArray(spec.libs) && window.atlas && window.atlas.libSource) {
       for (const nome of spec.libs) {
         try {
-          const src = await window.jarvis.libSource(nome);
+          const src = await window.atlas.libSource(nome);
           if (src) libs += '<script>' + src + '</scr' + 'ipt>';
         } catch (_e) { /* segue sem a lib */ }
       }
@@ -126,12 +126,12 @@
       ` L${pts[pts.length - 1][0]},${H - padB} Z`;
     const gid = 'lg';
     const grad = el('linearGradient', { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 });
-    grad.appendChild(el('stop', { offset: '0%', 'stop-color': JARVIS, 'stop-opacity': 0.35 }));
-    grad.appendChild(el('stop', { offset: '100%', 'stop-color': JARVIS, 'stop-opacity': 0 }));
+    grad.appendChild(el('stop', { offset: '0%', 'stop-color': ATLAS, 'stop-opacity': 0.35 }));
+    grad.appendChild(el('stop', { offset: '100%', 'stop-color': ATLAS, 'stop-opacity': 0 }));
     svg.appendChild(grad);
     svg.appendChild(el('path', { d: area, fill: `url(#${gid})` }));
     svg.appendChild(el('polyline', { points: pts.map((p) => p.join(',')).join(' '),
-      fill: 'none', stroke: JARVIS, 'stroke-width': 2.5 }));
+      fill: 'none', stroke: ATLAS, 'stroke-width': 2.5 }));
     // Com muitos pontos (ex.: 30 dias), afina rótulos p/ não amontoar: mostra ~8.
     const n = pts.length;
     const passo = n > 12 ? Math.ceil(n / 8) : 1;
@@ -225,7 +225,7 @@
     const W = svg._w, H = svg._h, cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.3;
     const ramos = spec.mapa.ramos;
     // nó central
-    svg.appendChild(el('circle', { cx, cy, r: 46, fill: 'rgba(0,212,255,0.12)', stroke: JARVIS, 'stroke-width': 2 }));
+    svg.appendChild(el('circle', { cx, cy, r: 46, fill: 'rgba(0,212,255,0.12)', stroke: ATLAS, 'stroke-width': 2 }));
     svg.appendChild(el('text', { x: cx, y: cy + 5, 'text-anchor': 'middle', fill: '#fff',
       'font-size': 15, 'font-weight': 700 }, trunc(spec.mapa.centro, 16)));
     ramos.forEach((ramo, i) => {
@@ -260,13 +260,13 @@
   // ---- WebSocket ----------------------------------------------------------
   let ws = null, reconnect = null;
   function connect() {
-    if (!window.jarvis || !window.jarvis.backendUrl) return;
-    ws = new WebSocket(window.jarvis.backendUrl);
+    if (!window.atlas || !window.atlas.backendUrl) return;
+    ws = new WebSocket(window.atlas.backendUrl);
     ws.addEventListener('message', (ev) => {
       let msg; try { msg = JSON.parse(ev.data); } catch { return; }
       if (msg.type === 'visualization' && msg.payload && msg.payload.spec) {
         render(msg.payload.spec);
-        if (window.jarvis.showViz) window.jarvis.showViz(); // 2ª janela aparece
+        if (window.atlas.showViz) window.atlas.showViz(); // 2ª janela aparece
       }
     });
     ws.addEventListener('close', () => { clearTimeout(reconnect); reconnect = setTimeout(connect, 1200); });

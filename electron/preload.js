@@ -3,10 +3,10 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 // A porta do backend é injetada pelo processo principal via additionalArguments.
-const portArg = process.argv.find((a) => a.startsWith('--jarvis-port='));
+const portArg = process.argv.find((a) => a.startsWith('--atlas-port='));
 const port = portArg ? Number(portArg.split('=')[1]) : 8765;
 
-contextBridge.exposeInMainWorld('jarvis', {
+contextBridge.exposeInMainWorld('atlas', {
   backendUrl: `ws://127.0.0.1:${port}`,
   port,
   // Controles de janela (sem expor ipcRenderer cru ao renderer).

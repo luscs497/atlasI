@@ -1,8 +1,8 @@
 """
-Ponte com o cérebro do JARVIS (o MESMO do desktop: persona, ferramentas,
+Ponte com o cérebro do ATLAS (o MESMO do desktop: persona, ferramentas,
 tarefas, finanças, hábitos, segundo cérebro, oráculo, Perplexity…).
 
-O pacote `jarvis` é usado como biblioteca, sem alterar nada nele. Diferenças do
+O pacote `atlas` é usado como biblioteca, sem alterar nada nele. Diferenças do
 capacete em relação ao desktop:
 
 - **Histórico** (contexto da conversa) vem do banco do capacete, por conversa —
@@ -26,9 +26,9 @@ from datetime import datetime
 from contextlib import contextmanager
 from typing import Awaitable, Callable, Protocol
 
-from helmet import jarvis_path  # noqa: F401
-from jarvis.config import MEMORY_PATH, load_config
-from jarvis.memory import Memory, _normalizar
+from helmet import atlas_path  # noqa: F401
+from atlas.config import MEMORY_PATH, load_config
+from atlas.memory import Memory, _normalizar
 
 log = logging.getLogger("helmet.cerebro")
 
@@ -46,7 +46,7 @@ DISPLAY_ERROR = "Não consegui."
 # Capacete em inglês: o prompt-base do desktop é em português, então o adendo
 # deixa claro que a RESPOSTA é sempre em inglês britânico, no estilo do filme.
 _EN_STYLE = (
-    "LANGUAGE: ALWAYS reply in ENGLISH (British), in the style of JARVIS from Iron "
+    "LANGUAGE: ALWAYS reply in ENGLISH (British), in the style of the AI butler from Iron "
     "Man: polite, composed, a touch of dry wit. This holds even though the rest of "
     "these instructions, your tools and the stored data are in Portuguese — "
     "translate whatever you report. Carry out requests directly with your tools — "
@@ -130,7 +130,7 @@ class Brain(Protocol):
 
 class SharedFactsMemory(Memory):
     """
-    `Memory` do JARVIS com histórico só em RAM e fatos mesclados no arquivo
+    `Memory` do ATLAS com histórico só em RAM e fatos mesclados no arquivo
     compartilhado (com trava), para conviver com o processo do desktop.
     """
 
@@ -193,7 +193,7 @@ class SharedFactsMemory(Memory):
             self._removed.clear()
 
 
-class JarvisBrain:
+class AtlasBrain:
     """Adaptador fino sobre o `OpenAIBrain` do desktop."""
 
     def __init__(self, inner, api_key: str) -> None:  # noqa: ANN001
@@ -257,9 +257,9 @@ class EchoBrain:
 
 def build_brain(allow_code: bool, model: str = "") -> Brain:
     """Monta o cérebro com as mesmas ferramentas do desktop (menos as de tela)."""
-    from jarvis.oraculo import Oracle
-    from jarvis.openai_brain import OpenAIBrain
-    from jarvis.perplexity import Perplexity
+    from atlas.oraculo import Oracle
+    from atlas.openai_brain import OpenAIBrain
+    from atlas.perplexity import Perplexity
 
     if not os.environ.get("OPENAI_API_KEY", "").strip():
         log.warning("OPENAI_API_KEY ausente — cérebro em modo eco")
@@ -276,15 +276,15 @@ def build_brain(allow_code: bool, model: str = "") -> Brain:
             log.warning("%s indisponível: %r", flag, exc)
             return None
 
-    from jarvis.financas import FinanceStore
-    from jarvis.habitos import HabitStore
-    from jarvis.segundo_cerebro import SecondBrain
-    from jarvis.tasks import TaskStore
-    from jarvis.timetrack import TimeTracker
+    from atlas.financas import FinanceStore
+    from atlas.habitos import HabitStore
+    from atlas.segundo_cerebro import SecondBrain
+    from atlas.tasks import TaskStore
+    from atlas.timetrack import TimeTracker
 
     coder = None
     if allow_code and config.get("claude_code_enabled", True):
-        from jarvis.claude_code import ClaudeCoder
+        from atlas.claude_code import ClaudeCoder
 
         coder = ClaudeCoder.from_config(config)
 
@@ -305,7 +305,7 @@ def build_brain(allow_code: bool, model: str = "") -> Brain:
         voice=None,
         max_tool_rounds=int(config.get("claude_code_max_rounds", 3)),
     )
-    return JarvisBrain(inner, os.environ["OPENAI_API_KEY"].strip())
+    return AtlasBrain(inner, os.environ["OPENAI_API_KEY"].strip())
 
 
 def _embedder(config: dict):

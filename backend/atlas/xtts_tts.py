@@ -1,5 +1,5 @@
 """
-Voz do JARVIS via XTTS-v2 (Coqui) — TTS local de alta naturalidade em PT-BR.
+Voz do ATLAS via XTTS-v2 (Coqui) — TTS local de alta naturalidade em PT-BR.
 
 Qualidade excelente e voz nativa em português, MAS pesado: roda numa venv isolada
 (`.venv-xtts`, com PyTorch) e a inferência na CPU é lenta — tipicamente perto do
@@ -65,7 +65,7 @@ class XTTSSpeaker:
         try:
             with self._lock:  # um worker só — serializa os pedidos
                 self._ensure_worker()
-                out = Path(tempfile.mkstemp(prefix="jarvis-xtts-", suffix=".wav")[1])
+                out = Path(tempfile.mkstemp(prefix="atlas-xtts-", suffix=".wav")[1])
                 req = {"text": text, "speaker": self.speaker,
                        "language": self.language, "out": str(out)}
                 self._proc.stdin.write(json.dumps(req) + "\n")

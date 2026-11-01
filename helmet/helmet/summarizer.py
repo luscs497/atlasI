@@ -6,7 +6,7 @@ import json
 import os
 
 _PROMPT = (
-    "Você recebe a transcrição de uma conversa por voz entre um usuário e o JARVIS "
+    "Você recebe a transcrição de uma conversa por voz entre um usuário e o ATLAS "
     "(assistente pessoal). Gere um TÍTULO curto (até 60 caracteres, sem aspas, sem "
     "ponto final) e uma DESCRIÇÃO curta (1 ou 2 frases, até 200 caracteres) que "
     "resumam os assuntos principais. Português do Brasil. Responda APENAS com JSON: "

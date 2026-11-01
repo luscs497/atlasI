@@ -1,16 +1,16 @@
 """
 Estado vivo de cada capacete — a máquina de estados da escuta.
 
-            "Jarvis" (ou botão)                    pedido
+            "Atlas" (ou botão)                    pedido
     IDLE ───────────────────────► LISTENING ─────────────► THINKING ──► SPEAKING
      ▲                                 ▲                                    │
      │   120 s de AFK real / "pode     └────────────────────────────────────┘
      └────────── desligar" ◄────────── (qualquer fala renova os 120 s)
 
-- **IDLE**: tudo que é dito é transcrito, mas só "Jarvis" faz algo. Nada é gravado.
+- **IDLE**: tudo que é dito é transcrito, mas só "Atlas" faz algo. Nada é gravado.
 - **LISTENING**: qualquer fala vira pedido ao cérebro e renova o prazo.
 - O prazo só corre quando NADA está acontecendo: nem o usuário falando, nem
-  enunciado na fila, nem o JARVIS pensando/falando. Ou seja, 2 min de AFK real.
+  enunciado na fila, nem o ATLAS pensando/falando. Ou seja, 2 min de AFK real.
 
 O runtime sobrevive a quedas de Wi-Fi: o estado é por `device_id`, não por
 conexão. Se o capacete reconectar dentro do prazo, a escuta continua.
@@ -61,7 +61,7 @@ class Models:
     """Modelos pesados, carregados em segundo plano no boot."""
 
     stt: object | None = None  # SpeechRecognizer (pedidos, escuta ativa)
-    stt_wake: object | None = None  # SpeechRecognizer (dormindo: achar "Jarvis")
+    stt_wake: object | None = None  # SpeechRecognizer (dormindo: achar "Atlas")
     tts: object | None = None  # VoiceSynth
     error: str | None = None
 
@@ -223,7 +223,7 @@ class DeviceRuntime:
         return {
             "type": "welcome",
             "device_id": self.id,
-            "server": "jarvis-capacete",
+            "server": "atlas-capacete",
             "caps": asdict(self.caps),
             "audio_target": self._audio_target(),
             "active_timeout_s": self.s.active_timeout_s,

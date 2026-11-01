@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Renderer do JARVIS — dois mundos visuais:
+ * Renderer do ATLAS — dois mundos visuais:
  *   · modo TEXTO = terminal estilo Claude Code (log + prompt de entrada)
  *   · modo VOZ   = orbe pulsante fullscreen (áudio-reativo via Web Audio)
  * Ctrl+Shift alterna entre eles. O protocolo WebSocket com o backend não mudou.
@@ -103,7 +103,7 @@ function setConnection(online) {
 // ============================================================
 //  MODO TEXTO — log de turnos
 // ============================================================
-const TURN_NAMES = { user: 'LUCAS', jarvis: 'JARVIS' };
+const TURN_NAMES = { user: 'LUCAS', atlas: 'ATLAS' };
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 function stamp() {
@@ -166,8 +166,8 @@ function buildTurn(who) {
 
 function addTurn(who, text) {
   const { body } = buildTurn(who);
-  if (who === 'jarvis') {
-    typeInto(body, text); // respostas do JARVIS surgem digitando
+  if (who === 'atlas') {
+    typeInto(body, text); // respostas do ATLAS surgem digitando
   } else {
     body.textContent = text;
     logEl.scrollTop = logEl.scrollHeight;
@@ -176,7 +176,7 @@ function addTurn(who, text) {
 
 function showThinking() {
   hideThinking();
-  const { turn, body } = buildTurn('jarvis');
+  const { turn, body } = buildTurn('atlas');
   turn.id = 'thinking';
   body.innerHTML =
     '<span class="thinking-dots"><span></span><span></span><span></span></span>';
@@ -191,7 +191,7 @@ function hideThinking() {
 //  WEBSOCKET
 // ============================================================
 function connect() {
-  ws = new WebSocket(window.jarvis.backendUrl);
+  ws = new WebSocket(window.atlas.backendUrl);
 
   ws.addEventListener('open', () => {
     setConnection(true);
@@ -249,7 +249,7 @@ function handleMessage(msg) {
       break;
     case 'message':
       hideThinking();
-      addTurn('jarvis', p.text);
+      addTurn('atlas', p.text);
       if (p.info) {
         // Mensagem intermediária (ex: Claude Code em execução) — mantém orbe em
         // 'thinking' com aura laranja pulsante e reexibe indicador no modo texto.
@@ -266,7 +266,7 @@ function handleMessage(msg) {
     case 'visualization':
       // O desenho é da 2ª janela; aqui só garantimos que ela ABRA (mesmo que
       // tenha sido fechada). Ao (re)conectar, o backend reenvia o último design.
-      if (window.jarvis.showViz) window.jarvis.showViz();
+      if (window.atlas.showViz) window.atlas.showViz();
       break;
     default:
       console.warn('mensagem desconhecida:', msg);
@@ -285,7 +285,7 @@ function enableVoice() {
 }
 
 // ============================================================
-//  VOZ — reprodução da fala do JARVIS (com analyser p/ o orbe)
+//  VOZ — reprodução da fala do ATLAS (com analyser p/ o orbe)
 // ============================================================
 function playSpeech(audioB64) {
   if (!audioB64) return;
@@ -460,7 +460,7 @@ function setMode(m) {
   mode = m;
   appEl.dataset.mode = m;
   modeBadge.textContent = m === 'voice' ? 'voz' : 'texto';
-  if (window.jarvis.setVoiceMode) window.jarvis.setVoiceMode(m === 'voice');
+  if (window.atlas.setVoiceMode) window.atlas.setVoiceMode(m === 'voice');
   send({ type: 'mode', payload: { mode: m } });
   if (m === 'voice') {
     ensureAudio();
@@ -538,10 +538,10 @@ window.addEventListener('keyup', (e) => {
 // ============================================================
 //  CONTROLES DE JANELA
 // ============================================================
-document.getElementById('btn-hide').addEventListener('click', () => window.jarvis.hideWindow());
-document.getElementById('btn-quit').addEventListener('click', () => window.jarvis.quit());
+document.getElementById('btn-hide').addEventListener('click', () => window.atlas.hideWindow());
+document.getElementById('btn-quit').addEventListener('click', () => window.atlas.quit());
 // Abre a 2ª janela com o último design (o backend reenvia ao (re)conectar).
-document.getElementById('btn-viz').addEventListener('click', () => window.jarvis.showViz && window.jarvis.showViz());
+document.getElementById('btn-viz').addEventListener('click', () => window.atlas.showViz && window.atlas.showViz());
 
 // ============================================================
 //  RELÓGIO DO CONSOLE
@@ -557,6 +557,6 @@ Orb.init(orbCanvas);
 setMode('text');
 setConnection(false);
 setState('booting');
-addTurn('system', 'JARVIS v2 — inicializando interface.');
+addTurn('system', 'ATLAS I — inicializando interface.');
 connect();
 inputEl.focus();

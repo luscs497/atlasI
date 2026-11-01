@@ -29,7 +29,7 @@ def _load_models(settings: Settings, models: Models) -> None:
         from helmet.i18n import t
 
         voice, voice_lang = settings.voice()
-        tts = VoiceSynth.from_jarvis_config(voice=voice, lang=voice_lang)
+        tts = VoiceSynth.from_atlas_config(voice=voice, lang=voice_lang)
         if tts is not None:
             tts.synth_pcm(t(settings.language, "warmup"), settings.output_sample_rate)  # aquece
         models.tts = tts
@@ -120,6 +120,6 @@ def create_app(
                 loader.cancel()
             await engine.dispose()
 
-    app = FastAPI(title="JARVIS — capacete", version=__version__, lifespan=lifespan)
+    app = FastAPI(title="ATLAS — capacete", version=__version__, lifespan=lifespan)
     app.include_router(router)
     return app

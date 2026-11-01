@@ -1,135 +1,144 @@
-# JARVIS v2
+# ATLAS I
 
-Assistente pessoal estilo Iron Man para **Linux (Pop!_OS)**: interface holográfica em
-**Electron** + cérebro em **Python**, conversando por **WebSocket local**. Fala, escuta,
-lembra de você entre sessões, puxa assunto sozinho, gerencia tarefas, tempo, finanças e
-hábitos, desenha gráficos e ainda tem um **capacete físico (ESP32)** que conversa com o
-mesmo JARVIS.
+**A**utonomous **T**echnology, **L**ogic & **A**ssistance **S**ystem.
+
+Meu assistente pessoal. A ideia veio do assistente do Homem de Ferro e foi crescendo:
+hoje ele fala, escuta, lembra das coisas entre uma sessão e outra, puxa assunto do
+nada, cuida das minhas tarefas, tempo, gastos e hábitos, faz gráfico quando eu peço
+e ainda roda num capacete com ESP32 que eu montei.
+
+Uso no Pop!_OS. A interface é em Electron e o cérebro é em Python, os dois conversando
+por WebSocket local.
 
 ```
  Electron (HUD) ──WebSocket 127.0.0.1──► backend/ (Python)  ──► OpenAI · Perplexity · Claude
                                               │
- Capacete ESP32 ──Wi-Fi/WebSocket──► helmet/ (FastAPI) ──► usa o mesmo pacote jarvis/
+ Capacete ESP32 ──Wi-Fi/WebSocket──► helmet/ (FastAPI) ──► usa o mesmo pacote atlas/
 ```
 
-## Funcionalidades
+## O que ele faz
 
-| Área | O que faz |
-|---|---|
-| **Dois modos de UI** | Texto (terminal estilo Claude Code) e voz (orbe fullscreen áudio-reativo). `Ctrl+Shift` alterna. |
-| **Cérebro** | OpenAI `gpt-4o-mini` com *tool calling* multi-turno (Gemini como alternativa, via `ia_provider`). |
-| **Voz** | STT local com `faster-whisper`; TTS local com **Kokoro** (padrão), Piper (fallback), XTTS-v2 (mais natural e lento, venv isolada) ou ElevenLabs. |
-| **Memória** | Episódica (últimas trocas recarregadas no boot) + semântica (fatos sobre você, extraídos automaticamente ou por "lembre-se que…"). |
-| **Proatividade** | Inicia conversas em intervalos aleatórios, sem interromper e respeitando uma janela de silêncio. |
-| **Produtividade** | Tarefas/projetos, controle de tempo, finanças (gastos e relatórios), hábitos e **segundo cérebro** (ideias com busca semântica). |
-| **Visualizações** | Gráficos e designs em HTML + Chart.js/D3 gerados sob demanda, que podem ser salvos e reabertos. |
-| **Tempo real** | Perplexity Sonar (`sonar-pro`) para cotações, clima, notícias. |
-| **Oráculo Claude** | Quando o GPT não sabe, consulta o Claude via CLI `claude`; também consegue executar tarefas no **Claude Code** dentro de `~/projetos`. |
-| **Capacete** | Backend FastAPI para um ESP32 com microfone e buzzers: wake word "Jarvis", modo AFK, conversas com resumo. Veja [`helmet/README.md`](helmet/README.md). |
+- **Dois modos de tela.** Um modo texto, parecido com um terminal, e um modo voz com
+  um orbe em tela cheia que reage ao áudio. `Ctrl+Shift` troca entre eles.
+- **Cérebro:** `gpt-4o-mini` com tool calling. Dá pra trocar pro Gemini pelo
+  `ia_provider` no config.
+- **Voz:** o STT é local, com `faster-whisper`. Pro TTS eu uso o Kokoro, mas também
+  funciona com Piper, XTTS-v2 (bem mais natural, só que lento e precisa de venv
+  separada) ou ElevenLabs.
+- **Memória:** ele recarrega as últimas conversas quando inicia e guarda fatos sobre
+  mim, tanto os que ele percebe sozinho quanto os que eu peço ("lembra que...").
+- **Puxa assunto:** de tempos em tempos ele começa uma conversa sozinho. Não
+  interrompe se eu estiver falando e respeita um horário de silêncio.
+- **Produtividade:** tarefas e projetos, cronômetro de tempo por projeto, controle de
+  gastos, hábitos e um "segundo cérebro" pra guardar ideias e buscar depois.
+- **Gráficos:** gera visualizações em HTML com Chart.js/D3 na hora, e dá pra salvar e
+  abrir de novo depois.
+- **Coisas em tempo real** (cotação, clima, notícia): Perplexity Sonar.
+- **Claude como oráculo:** quando o GPT não sabe alguma coisa ele pergunta pro Claude
+  pela CLI `claude`. Também consegue mandar o Claude Code fazer coisas dentro de
+  `~/projetos`.
+- **Capacete:** um backend FastAPI pra um ESP32 com microfone e buzzers. Acorda
+  quando escuta "Atlas", volta a dormir sozinho e guarda resumo das conversas.
+  Mais detalhes em [`helmet/README.md`](helmet/README.md).
 
-## Estrutura
+## Como tá organizado
 
 ```
-jarvis-v2/
-├── electron/                # app desktop
-│   ├── main.js              # janela + sobe o backend como subprocesso
-│   ├── preload.js           # ponte (sandboxed: só require('electron'), resto via IPC)
-│   └── renderer/            # HUD (html/css/js, orbe, visualizações, vendor/ Chart.js + D3)
+atlasI/
+├── electron/          # app desktop (janela, ponte IPC e o HUD em renderer/)
 ├── backend/
-│   ├── server.py            # servidor WebSocket, proatividade, roteamento de mensagens
-│   ├── jarvis/              # cérebro, STT/TTS, memória, tarefas, finanças, hábitos…
+│   ├── server.py      # servidor WebSocket e a parte de puxar assunto
+│   ├── atlas/         # cérebro, voz, memória, tarefas, finanças, hábitos...
 │   └── requirements.txt
-├── helmet/                  # backend do capacete (FastAPI, venv própria) + firmware ESP32
+├── helmet/            # backend do capacete + firmware do ESP32
 ├── scripts/
-│   ├── jarvis               # launcher do desktop
-│   └── jarvis-capacete      # launcher do capacete
+│   ├── atlas          # abre o desktop
+│   └── atlas-capacete # sobe o backend do capacete
 ├── .env.example
 └── package.json
 ```
 
-## Setup
+## Instalando
 
-Pré-requisitos: **Node 18+**, **Python 3.10+** com `python3-venv`. Para o oráculo/Claude
-Code, a CLI `claude` instalada e logada (opcional).
+Precisa de Node 18+ e Python 3.10+ (com `python3-venv`). A CLI `claude` só é
+necessária se quiser o oráculo e o Claude Code.
 
 ```bash
-# 1) Electron
 npm install
 
-# 2) Backend Python
 python3 -m venv backend/.venv
 backend/.venv/bin/pip install -r backend/requirements.txt
 
-# 3) Segredos
-cp .env.example .env     # preencha OPENAI_API_KEY (obrigatória) e as demais que quiser
+cp .env.example .env   # só a OPENAI_API_KEY é obrigatória
 ```
 
 ### Modelos de voz
 
-Ficam em `~/.jarvis/models/` (fora do repositório) e carregam em segundo plano após o
-boot; a UI avisa "Voz pronta".
+Ficam em `~/.atlas/models/`, fora do repo. Eles carregam em segundo plano depois que
+o app abre, e aparece "Voz pronta" quando terminam.
 
-- **Whisper**: baixado automaticamente pelo `faster-whisper` no primeiro uso.
-- **Kokoro**: coloque `kokoro-v1.0.onnx` e `voices-v1.0.bin` em `~/.jarvis/models/kokoro/`
-  (releases do [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx/releases)).
-- **Piper** (fallback):
+- Whisper: baixa sozinho na primeira vez.
+- Kokoro: baixe o `kokoro-v1.0.onnx` e o `voices-v1.0.bin` dos
+  [releases do kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx/releases) e
+  coloque em `~/.atlas/models/kokoro/`.
+- Piper (reserva, caso o Kokoro falhe):
   ```bash
   backend/.venv/bin/python -m piper.download_voices pt_BR-faber-medium \
-    --data-dir ~/.jarvis/models/piper
+    --data-dir ~/.atlas/models/piper
   ```
-- **XTTS-v2** (opcional): precisa de uma venv separada com PyTorch em `backend/.venv-xtts`
-  com o pacote `coqui-tts` instalado.
+- XTTS-v2 é opcional e precisa de uma venv própria em `backend/.venv-xtts`, com
+  PyTorch e `coqui-tts`.
 
-## Rodar
-
-```bash
-npm start            # ou: npm run dev
-```
-
-Alias global:
+## Rodando
 
 ```bash
-echo "alias jarvis='$PWD/scripts/jarvis'" >> ~/.bashrc && source ~/.bashrc
-jarvis
+npm start
 ```
 
-| Atalho | Ação |
-|---|---|
-| `Ctrl+Enter` | mostra/foca a janela (global) |
-| `Ctrl+Shift` | alterna texto ⇄ voz |
-| `Espaço` (segurar) | fala no modo voz (ou clique e segure o orbe) |
+Eu deixo um alias no `.bashrc` pra abrir de qualquer lugar:
+
+```bash
+echo "alias atlas='$PWD/scripts/atlas'" >> ~/.bashrc && source ~/.bashrc
+atlas
+```
+
+Atalhos:
+
+- `Ctrl+Enter` mostra a janela (funciona em qualquer lugar do sistema)
+- `Ctrl+Shift` troca entre texto e voz
+- segurar `Espaço` (ou clicar e segurar o orbe) pra falar no modo voz
 
 ## Configuração
 
-Os segredos ficam no `.env` (veja `.env.example`). As preferências ficam em
-`~/.jarvis/config.json`, criado no primeiro boot com os padrões de
-`backend/jarvis/config.py`. As principais:
+As chaves de API ficam no `.env`. O resto fica em `~/.atlas/config.json`, que é
+criado na primeira vez que roda, com os valores padrão de `backend/atlas/config.py`.
+As opções que eu mais mexo:
 
-| Chave | Padrão | Descrição |
+| Chave | Padrão | Pra quê |
 |---|---|---|
 | `ia_provider` | `openai` | `openai` ou `gemini` |
-| `openai_model` | `gpt-4o-mini` | modelo do cérebro |
-| `tts_engine` | `elevenlabs` | `kokoro` (recomendado: local e rápido), `piper`, `xtts` ou `elevenlabs` |
-| `stt_model` | `small` | modelo do Whisper (`medium` = mais preciso, mais lento) |
-| `proativo_intervalo_min` / `_max` | `30` / `60` | minutos entre iniciativas (`min <= 0` desativa) |
-| `oraculo_enabled`, `perplexity_enabled`, `claude_code_enabled` | `true` | liga/desliga integrações |
-| `tasks_enabled`, `finance_enabled`, `habits_enabled`, `second_brain_enabled`, `viz_enabled` | `true` | liga/desliga módulos |
+| `openai_model` | `gpt-4o-mini` | modelo usado no cérebro |
+| `tts_engine` | `elevenlabs` | `kokoro`, `piper`, `xtts` ou `elevenlabs` |
+| `stt_model` | `small` | modelo do Whisper (`medium` erra menos, mas demora mais) |
+| `proativo_intervalo_min` / `_max` | `30` / `60` | minutos entre uma puxada de assunto e outra (`min <= 0` desliga) |
+| `oraculo_enabled`, `perplexity_enabled`, `claude_code_enabled` | `true` | integrações |
+| `tasks_enabled`, `finance_enabled`, `habits_enabled`, `second_brain_enabled`, `viz_enabled` | `true` | módulos |
 
-Os dados (memória, banco SQLite, visualizações salvas) também ficam em `~/.jarvis/`.
+Memória, banco SQLite e gráficos salvos também ficam em `~/.atlas/`.
 
-## Capacete (ESP32)
+## Capacete
 
-Roda separado do desktop (porta 8770, venv `helmet/.venv`):
+Roda separado do desktop, na porta 8770 e com venv própria:
 
 ```bash
 python3 -m venv helmet/.venv
 helmet/.venv/bin/pip install -r helmet/requirements.txt
-scripts/jarvis-capacete
+scripts/atlas-capacete
 ```
 
-No firmware, copie `helmet/firmware/capacete/segredos.example.h` para `segredos.h` e
-preencha o Wi-Fi e o `HELMET_TOKEN`, que precisa ser o mesmo valor do `.env`. Protocolo,
-simulador, testes e o passo a passo completo estão em [`helmet/README.md`](helmet/README.md).
+No firmware, copie `helmet/firmware/capacete/segredos.example.h` pra `segredos.h` e
+coloque o Wi-Fi e o `HELMET_TOKEN` (tem que ser igual ao do `.env`). Protocolo,
+simulador, testes e o resto está em [`helmet/README.md`](helmet/README.md).
 
 ## Licença
 

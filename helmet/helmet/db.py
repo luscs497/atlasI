@@ -7,11 +7,11 @@ Modelo de dados do capacete (SQLAlchemy 2.0, async).
 - **Device**: cada capacete/ESP32 que já se conectou.
 - **Conversation**: agrupa as interações até estourar `conversation_max_bytes`.
   Atravessa várias escutas; quando é encerrada, ganha título e descrição (OpenAI).
-- **ListenSession**: uma janela de escuta ativa — começa no "Jarvis" e termina
+- **ListenSession**: uma janela de escuta ativa — começa no "Atlas" e termina
   após o AFK (ou comando/desligamento).
-- **Interaction**: uma troca (fala do usuário → resposta do JARVIS) + métricas.
+- **Interaction**: uma troca (fala do usuário → resposta do ATLAS) + métricas.
 
-Banco separado do `jarvis.db` do desktop (fica em `~/.jarvis/capacete.db`).
+Banco separado do `atlas.db` do desktop (fica em `~/.atlas/capacete.db`).
 """
 
 from __future__ import annotations

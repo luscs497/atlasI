@@ -1,5 +1,5 @@
 """
-Tela de visualizações dinâmicas do JARVIS.
+Tela de visualizações dinâmicas do ATLAS.
 
 O usuário pede visuais por voz ("mostra meus gastos do mês em pizza", "faz um
 dashboard do meu tempo por projeto") e uma 2ª janela dedicada os desenha em tempo
@@ -17,7 +17,7 @@ Tipos suportados (o front-end sabe desenhar cada um):
   kpis                     -> `cards`: [{rotulo, valor, sub?}]
   mapa_mental              -> `mapa`: {centro, ramos: [{titulo, filhos: [str]}]}
 
-Persiste no banco compartilhado `~/.jarvis/jarvis.db` (ver `jarvis.db`).
+Persiste no banco compartilhado `~/.atlas/atlas.db` (ver `atlas.db`).
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 
-from jarvis.db import connect
+from atlas.db import connect
 
 TIPOS = ("barras", "linhas", "pizza", "lista", "kpis", "mapa_mental", "html")
 

@@ -1,5 +1,5 @@
 """
-Ouvido do JARVIS (STT) — transcrição de fala local via faster-whisper.
+Ouvido do ATLAS (STT) — transcrição de fala local via faster-whisper.
 
 Roda 100% offline na CPU (compute_type int8). Aceita o áudio gravado pela UI
 em bytes (qualquer contêiner que o PyAV decodifique — ex.: webm/opus do
@@ -10,9 +10,9 @@ reutilizado. As chamadas de transcrição devem rodar em `asyncio.to_thread`.
 
 Qualidade: o modelo padrão é `small` — bem mais preciso em PT-BR que o `base`,
 ainda viável em CPU (int8). Para máxima precisão troque para `medium` na config
-(`~/.jarvis/config.json`, chave `stt_model`), ao custo de mais latência. Um
+(`~/.atlas/config.json`, chave `stt_model`), ao custo de mais latência. Um
 `initial_prompt` em português enviesa a grafia e o contexto (inclusive o nome
-"JARVIS").
+"ATLAS").
 """
 
 from __future__ import annotations
@@ -21,12 +21,12 @@ import io
 import os
 from pathlib import Path
 
-MODELS_DIR = Path.home() / ".jarvis" / "models" / "whisper"
+MODELS_DIR = Path.home() / ".atlas" / "models" / "whisper"
 
 # Enviesa o reconhecimento para PT-BR e o domínio do assistente.
 DEFAULT_PROMPT = (
     "Transcrição de uma conversa em português do Brasil com um assistente "
-    "pessoal chamado JARVIS."
+    "pessoal chamado ATLAS."
 )
 
 
@@ -62,7 +62,7 @@ class Transcriber:
             io.BytesIO(audio),
             language=self.language,
             beam_size=5,
-            # Enviesa grafia/pontuação para PT-BR e o domínio do JARVIS.
+            # Enviesa grafia/pontuação para PT-BR e o domínio do ATLAS.
             initial_prompt=self.initial_prompt,
             # Não arrasta contexto entre segmentos: evita "alucinar" repetições.
             condition_on_previous_text=False,

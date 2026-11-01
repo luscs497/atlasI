@@ -1,7 +1,7 @@
 """
 Display pequeno no capacete (LCD 16x2 / 20x4, OLED ~21x5) — formatação pura.
 
-Tudo aqui é determinístico e sem I/O: recebe o texto do JARVIS e devolve as
+Tudo aqui é determinístico e sem I/O: recebe o texto do ATLAS e devolve as
 linhas prontas p/ o firmware só desenhar (sem quebrar nada do lado do ESP32).
 
 Regras:
@@ -131,7 +131,7 @@ def _with_ellipsis(words: list[str]) -> list[str]:
 
 
 def fit(text: str, spec: DisplaySpec, limit: int | None = None) -> Frame:
-    """Texto do JARVIS -> quadro que CABE em `spec` (e em `limit` caracteres)."""
+    """Texto do ATLAS -> quadro que CABE em `spec` (e em `limit` caracteres)."""
     limit = spec.capacity if limit is None else min(limit, spec.capacity)
     t = clean_text(text)
     if spec.ascii:

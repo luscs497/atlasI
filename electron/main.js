@@ -28,7 +28,7 @@ function getFreePort() {
 
 /** Caminho do interpretador Python: usa a venv do projeto se existir. */
 function resolvePython() {
-  if (process.env.JARVIS_PYTHON) return process.env.JARVIS_PYTHON;
+  if (process.env.ATLAS_PYTHON) return process.env.ATLAS_PYTHON;
   const venvPy = path.join(ROOT, 'backend', '.venv', 'bin', 'python');
   return fs.existsSync(venvPy) ? venvPy : 'python3';
 }
@@ -55,7 +55,7 @@ function startBackend(port) {
     backendProc.stdout.on('data', (chunk) => {
       const text = chunk.toString();
       process.stdout.write(`[backend] ${text}`);
-      if (text.includes('JARVIS_BACKEND_READY')) ready();
+      if (text.includes('ATLAS_BACKEND_READY')) ready();
     });
     backendProc.stderr.on('data', (chunk) => {
       process.stderr.write(`[backend:err] ${chunk}`);
@@ -102,7 +102,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      additionalArguments: [`--jarvis-port=${backendPort}`],
+      additionalArguments: [`--atlas-port=${backendPort}`],
     },
   });
 
@@ -150,12 +150,12 @@ function createVizWindow() {
     resizable: true,
     show: false,
     skipTaskbar: false,
-    title: 'JARVIS · Visualizações',
+    title: 'ATLAS · Visualizações',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      additionalArguments: [`--jarvis-port=${backendPort}`],
+      additionalArguments: [`--atlas-port=${backendPort}`],
     },
   });
   vizWindow.loadFile(path.join(__dirname, 'renderer', 'viz.html'));

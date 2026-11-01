@@ -1,5 +1,5 @@
 """
-Perplexity Sonar: fonte de dados em TEMPO REAL para o JARVIS.
+Perplexity Sonar: fonte de dados em TEMPO REAL para o ATLAS.
 
 Quando o usuário pergunta algo que muda com o tempo (cotações, clima, notícias,
 resultados, preços, qualquer dado atual), o cérebro NÃO deve chutar, perguntar ao

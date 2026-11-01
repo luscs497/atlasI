@@ -1,5 +1,5 @@
 """
-Voz do JARVIS via Kokoro (kokoro-onnx) — TTS local, gratuito e leve.
+Voz do ATLAS via Kokoro (kokoro-onnx) — TTS local, gratuito e leve.
 
 Kokoro é um modelo de TTS pequeno (82M) que roda no `onnxruntime` que já usamos
 para o Whisper — sem PyTorch. Prosódia bem mais natural que o Piper. As vozes em
@@ -7,8 +7,8 @@ PT-BR (pf_dora / pm_alex / pm_santa) são recentes/experimentais, então a escol
 final é do ouvido do usuário.
 
 Mesma interface dos outros motores: `synthesize(text) -> bytes` (WAV completo),
-`from_config`, `label`. Aceita um `fallback` (Piper) para nunca deixar o JARVIS
-mudo se algo falhar. Modelos em ~/.jarvis/models/kokoro/.
+`from_config`, `label`. Aceita um `fallback` (Piper) para nunca deixar o ATLAS
+mudo se algo falhar. Modelos em ~/.atlas/models/kokoro/.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 
-MODELS_DIR = Path.home() / ".jarvis" / "models" / "kokoro"
+MODELS_DIR = Path.home() / ".atlas" / "models" / "kokoro"
 _MODEL = "kokoro-v1.0.onnx"
 _VOICES = "voices-v1.0.bin"
 

@@ -8,11 +8,11 @@
        à página nem ao preload). frame-src 'self' libera o srcdoc. -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src ws://127.0.0.1:*; font-src 'self'; frame-src 'self';" />
-  <title>JARVIS · Visualizações</title>
+  <title>ATLAS · Visualizações</title>
   <style>
     :root {
       --bg: #0a0a0f;
-      --jarvis: #00D4FF;   /* ciano — primário */
+      --atlas: #00D4FF;   /* ciano — primário */
       --lucas: #00FFC8;    /* água — secundário */
       --apoio1: #0EA5E9;
       --apoio2: #06B6D4;
@@ -39,7 +39,7 @@
       -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 78%);
               mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 78%);
     }
-    .corner { position: absolute; width: 26px; height: 26px; border: 2px solid var(--jarvis); opacity: 0.55; }
+    .corner { position: absolute; width: 26px; height: 26px; border: 2px solid var(--atlas); opacity: 0.55; }
     .corner.tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; }
     .corner.tr { top: 14px; right: 14px; border-left: 0; border-bottom: 0; }
     .corner.bl { bottom: 14px; left: 14px; border-right: 0; border-top: 0; }
@@ -47,7 +47,7 @@
 
     .wrap { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; padding: 34px 40px 30px; }
     header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
-    .brand { font-size: 12px; letter-spacing: 4px; color: var(--jarvis); text-transform: uppercase; opacity: 0.8; }
+    .brand { font-size: 12px; letter-spacing: 4px; color: var(--atlas); text-transform: uppercase; opacity: 0.8; }
     #title { font-size: 26px; font-weight: 600; letter-spacing: 0.3px; color: #fff;
              text-shadow: 0 0 18px rgba(0, 212, 255, 0.25); }
     #stage { flex: 1; min-height: 0; position: relative; }
@@ -76,7 +76,7 @@
     ul.lista li { display: flex; align-items: center; gap: 14px; padding: 14px 18px;
       background: rgba(255, 255, 255, 0.02); border: 1px solid var(--linha); border-radius: 10px; }
     ul.lista li .dot { width: 8px; height: 8px; flex: 0 0 8px; transform: rotate(45deg);
-      background: var(--jarvis); box-shadow: 0 0 10px var(--jarvis); }
+      background: var(--atlas); box-shadow: 0 0 10px var(--atlas); }
     ul.lista li .txt { font-size: 15px; color: var(--texto); }
     ul.lista li .det { margin-left: auto; font-size: 12px; color: var(--dim); }
   </style>

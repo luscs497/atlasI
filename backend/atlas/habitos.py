@@ -1,9 +1,9 @@
 """
-Agenda de desenvolvimento pessoal do JARVIS — hábitos diários.
+Agenda de desenvolvimento pessoal do ATLAS — hábitos diários.
 
 O usuário define hábitos que quer **construir** (ex.: exercício, leitura) ou
 **quebrar** (ex.: cigarro, açúcar), faz um check-in por voz no fim do dia, e o
-JARVIS acompanha a sequência (streak) e dá feedback honesto sobre a consistência.
+ATLAS acompanha a sequência (streak) e dá feedback honesto sobre a consistência.
 
 Modelo uniforme via `sucesso` (bool): o dia foi um SUCESSO em relação à meta do
 hábito, independente do tipo. Cabe ao cérebro mapear a fala:
@@ -13,14 +13,14 @@ hábito, independente do tipo. Cabe ao cérebro mapear a fala:
 Assim a sequência é sempre "dias consecutivos de sucesso", igual para os dois
 tipos. Um check-in por hábito por dia (re-registrar sobrescreve).
 
-Persiste no banco compartilhado `~/.jarvis/jarvis.db` (ver `jarvis.db`).
+Persiste no banco compartilhado `~/.atlas/atlas.db` (ver `atlas.db`).
 """
 
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 
-from jarvis.db import connect
+from atlas.db import connect
 
 TIPOS = ("construir", "quebrar")
 

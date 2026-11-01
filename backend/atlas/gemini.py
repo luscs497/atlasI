@@ -1,12 +1,12 @@
 """
-Cérebro do JARVIS via API do Google Gemini (gratuita).
+Cérebro do ATLAS via API do Google Gemini (gratuita).
 
-Encapsula uma sessão de chat com histórico e a persona do JARVIS. A chamada é
+Encapsula uma sessão de chat com histórico e a persona do ATLAS. A chamada é
 assíncrona (SDK `google-genai`, cliente `aio`) para nunca travar o event loop do
 servidor WebSocket. Um lock serializa as mensagens — o assistente é de usuário
 único e as respostas devem sair em ordem.
 
-Memória de longo prazo (`jarvis.memory.Memory`): os fatos duráveis sobre o
+Memória de longo prazo (`atlas.memory.Memory`): os fatos duráveis sobre o
 usuário são injetados na persona; o histórico recente é recarregado no chat ao
 subir o backend (continuidade entre sessões). Após cada troca, uma chamada extra
 e barata ao Gemini extrai novos fatos em segundo plano. O usuário também pode
@@ -26,7 +26,7 @@ import re
 from google import genai
 from google.genai import types
 
-from jarvis.memory import Memory
+from atlas.memory import Memory
 
 # Gatilhos de comando explícito (início da fala do usuário).
 _REMEMBER_RE = re.compile(
@@ -43,7 +43,8 @@ _FORGET_RE = re.compile(
 
 def _system_prompt(usuario_nome: str, facts_block: str) -> str:
     base = (
-        f"Você é o JARVIS, o assistente pessoal de {usuario_nome}, inspirado no "
+        f"Você é o ATLAS (Autonomous Technology, Logic & Assistance System), o "
+        f"assistente pessoal de {usuario_nome}, inspirado no "
         "assistente do Homem de Ferro. Fale em português do Brasil. Quando for "
         "natural se dirigir ao usuário, trate-o apenas por 'senhor' — nunca "
         "'senhor {nome}'. Não force o 'senhor' em toda frase: use com parcimônia, "
@@ -90,7 +91,7 @@ class GeminiBrain:
         return contents
 
     async def reply(self, text: str, on_action=None, on_visualization=None) -> str:
-        """Envia uma mensagem do usuário e devolve a resposta do JARVIS.
+        """Envia uma mensagem do usuário e devolve a resposta do ATLAS.
 
         `on_action` existe só para manter a mesma interface do OpenAIBrain (que
         executa ações via Claude Code); o Gemini não tem essa capacidade e ignora.
@@ -112,7 +113,7 @@ class GeminiBrain:
             # Sem texto normalmente significa bloqueio por filtro de segurança.
             reply = "Desculpe, senhor, não consegui formular uma resposta para isso."
 
-        self.memory.add_turn("jarvis", reply)
+        self.memory.add_turn("atlas", reply)
         self.memory.save()
 
         # Fatos de comandos já foram salvos; só extrai de conversas normais.
@@ -153,7 +154,7 @@ class GeminiBrain:
             "assistente. Responda APENAS um array JSON de strings curtas em "
             'português na 3ª pessoa (ex.: ["Mora em Porto Alegre"]). '
             "Se não houver nada digno de nota, responda [].\n\n"
-            f"Usuário: {user_text}\nJARVIS: {reply_text}"
+            f"Usuário: {user_text}\nATLAS: {reply_text}"
         )
         try:
             async with self._lock:
@@ -190,9 +191,9 @@ class GeminiBrain:
 
     async def proactive(self, contexto: str = "") -> str:
         """
-        JARVIS puxa a conversa por conta própria (proatividade). Não é fala do
+        ATLAS puxa a conversa por conta própria (proatividade). Não é fala do
         usuário: mandamos uma instrução de sistema pedindo uma iniciativa breve
-        e natural, e persistimos só a resposta como turno do JARVIS.
+        e natural, e persistimos só a resposta como turno do ATLAS.
         """
         instrucao = (
             "(Instrução do sistema — o usuário NÃO falou agora. Tome você a "
@@ -212,7 +213,7 @@ class GeminiBrain:
         text = (response.text or "").strip()
         if not text:
             return ""
-        self.memory.add_turn("jarvis", text)
+        self.memory.add_turn("atlas", text)
         self.memory.save()
         return text
 

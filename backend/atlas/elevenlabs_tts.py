@@ -1,7 +1,7 @@
 """
-Voz premium do JARVIS (TTS) — síntese de fala via API do ElevenLabs.
+Voz premium do ATLAS (TTS) — síntese de fala via API do ElevenLabs.
 
-Espelho do `jarvis.tts.Speaker` (Piper): mesma interface `synthesize()` que
+Espelho do `atlas.tts.Speaker` (Piper): mesma interface `synthesize()` que
 devolve um WAV completo em bytes, pronto para a UI tocar. É o alvo "de filme":
 uma voz grave/madura (por padrão a britânica "George").
 
@@ -10,7 +10,7 @@ módulo `wave` da stdlib — assim mantemos o contrato `audio/wav` da UI sem
 dependência nova nem conversão de MP3.
 
 A cota gratuita é limitada (~10 mil caracteres/mês). Quando ela acaba (ou a rede
-falha), caímos automaticamente no `fallback` (Piper local), para o JARVIS nunca
+falha), caímos automaticamente no `fallback` (Piper local), para o ATLAS nunca
 ficar mudo. A chamada é de rede/bloqueante — os chamadores já a rodam em
 `asyncio.to_thread`.
 """

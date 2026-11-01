@@ -1,7 +1,7 @@
 {
-  "name": "jarvis-v2",
+  "name": "atlas-i",
   "version": "0.1.0",
-  "description": "JARVIS v2 — assistente pessoal estilo Iron Man para Pop!_OS",
+  "description": "ATLAS I — assistente pessoal estilo Iron Man para Pop!_OS",
   "author": "Lucas",
   "license": "MIT",
   "main": "electron/main.js",

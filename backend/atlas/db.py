@@ -1,7 +1,7 @@
 """
-Fundação de dados persistente do JARVIS.
+Fundação de dados persistente do ATLAS.
 
-Um banco SQLite único em `~/.jarvis/jarvis.db` serve de base para as features
+Um banco SQLite único em `~/.atlas/atlas.db` serve de base para as features
 que precisam guardar estado estruturado por tempo indeterminado — tarefas,
 finanças, hábitos, rastreamento de tempo, segundo cérebro. Cada feature dona de
 suas tabelas as cria via seu próprio módulo (ex.: `tasks.TaskStore`), usando o
@@ -21,14 +21,14 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-from jarvis.config import JARVIS_DIR
+from atlas.config import ATLAS_DIR
 
-DB_PATH: Path = JARVIS_DIR / "jarvis.db"
+DB_PATH: Path = ATLAS_DIR / "atlas.db"
 
 
 def connect() -> sqlite3.Connection:
-    """Abre uma conexão com o banco, criando `~/.jarvis/` se preciso."""
-    JARVIS_DIR.mkdir(parents=True, exist_ok=True)
+    """Abre uma conexão com o banco, criando `~/.atlas/` se preciso."""
+    ATLAS_DIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row  # linhas acessíveis por nome de coluna
     conn.execute("PRAGMA journal_mode=WAL")  # leituras não bloqueiam escritas

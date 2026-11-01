@@ -7,7 +7,7 @@ Serve para testar o backend antes do hardware ficar pronto:
     helmet/.venv/bin/python helmet/tools/simulador.py --mic
 
     # frases sintetizadas (sem precisar falar), com pausa entre elas
-    helmet/.venv/bin/python helmet/tools/simulador.py --say "Jarvis." --say "Que horas são?"
+    helmet/.venv/bin/python helmet/tools/simulador.py --say "Atlas." --say "Que horas são?"
 
     # arquivos WAV
     helmet/.venv/bin/python helmet/tools/simulador.py --wav pergunta.wav
@@ -19,7 +19,7 @@ salvo em WAV (`--save-audio`). Sem `--speaker`, o backend toca no PC sozinho.
 Com `--display 16x2` (ou 20x4, 21x5…) o simulador declara um display I2C no
 hello e desenha cada quadro `display` recebido numa caixinha ASCII:
 
-    helmet/.venv/bin/python helmet/tools/simulador.py --display 16x2 --say "Jarvis, oi"
+    helmet/.venv/bin/python helmet/tools/simulador.py --display 16x2 --say "Atlas, oi"
 """
 
 from __future__ import annotations
@@ -72,7 +72,7 @@ def synth(text: str) -> bytes:
         from helmet.settings import Settings
 
         voice, lang = Settings().voice()  # mesma língua/voz do capacete (HELMET_LANGUAGE)
-        _VOICE = VoiceSynth.from_jarvis_config(voice=voice, lang=lang)
+        _VOICE = VoiceSynth.from_atlas_config(voice=voice, lang=lang)
     return _VOICE.synth_pcm(text, RATE)
 
 
@@ -110,7 +110,7 @@ async def main(args) -> int:  # noqa: ANN001
     t_speech_end = [0.0]
     stats: list[dict] = []
     active = [False]
-    awaiting = [False]  # chegou a resposta; falta o JARVIS terminar (falar no PC)
+    awaiting = [False]  # chegou a resposta; falta o ATLAS terminar (falar no PC)
     display = parse_display(args.display)
 
     async with websockets.connect(url, max_size=None) as ws:
@@ -148,10 +148,10 @@ async def main(args) -> int:  # noqa: ANN001
                     log(f"❯ você: {m['text']}")
                 elif kind == "reply":
                     replies.append(m)
-                    log(f"● JARVIS: {m['text']}")
+                    log(f"● ATLAS: {m['text']}")
                     if not args.speaker:
                         stats.append({"reply_s": time.monotonic() - t_speech_end[0]})
-                        awaiting[0] = True  # espera o JARVIS terminar (mic mudo)
+                        awaiting[0] = True  # espera o ATLAS terminar (mic mudo)
                 elif kind == "audio_start":
                     first_audio = None
                     if args.play:
@@ -182,7 +182,7 @@ async def main(args) -> int:  # noqa: ANN001
         await asyncio.sleep(0.5)
 
         if args.mic:
-            log("🎤 microfone aberto — diga 'Jarvis…' (Ctrl+C para sair)")
+            log("🎤 microfone aberto — diga 'Atlas…' (Ctrl+C para sair)")
             proc = await asyncio.create_subprocess_exec(
                 "parecord", "--raw", "--format=s16le", f"--rate={RATE}", "--channels=1",
                 "--latency-msec=40", stdout=asyncio.subprocess.PIPE)
@@ -210,12 +210,12 @@ async def main(args) -> int:  # noqa: ANN001
             await send_realtime(ws, b"\x00\x00" * (RATE // 5) + pcm)
             t_speech_end[0] = time.monotonic()
             await send_realtime(ws, silence)  # silêncio p/ o VAD fechar o enunciado
-            # Só espera resposta se houver pedido (o "Jarvis" sozinho só ativa).
+            # Só espera resposta se houver pedido (o "Atlas" sozinho só ativa).
             from helmet.wake import find_wake, is_sleep_command
 
             m = find_wake(label)
             if m is not None and not m.command:
-                wait = 2.5  # "Jarvis" sozinho: só ativa
+                wait = 2.5  # "Atlas" sozinho: só ativa
             elif is_sleep_command(label) or (m is None and not active[0]):
                 wait = 3.0  # vai dormir / será ignorado: não há resposta
             else:

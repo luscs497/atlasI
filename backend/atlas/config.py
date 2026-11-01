@@ -1,7 +1,7 @@
 """
-Configuração e persistência local do JARVIS.
+Configuração e persistência local do ATLAS.
 
-Os dados do usuário ficam em ~/.jarvis/ (fora do repositório), conforme o
+Os dados do usuário ficam em ~/.atlas/ (fora do repositório), conforme o
 escopo. Aqui já criamos a base de config; a memória (memoria.json) é usada
 a partir da fase de persistência.
 """
@@ -11,9 +11,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-JARVIS_DIR = Path.home() / ".jarvis"
-CONFIG_PATH = JARVIS_DIR / "config.json"
-MEMORY_PATH = JARVIS_DIR / "memoria.json"
+ATLAS_DIR = Path.home() / ".atlas"
+CONFIG_PATH = ATLAS_DIR / "config.json"
+MEMORY_PATH = ATLAS_DIR / "memoria.json"
 
 DEFAULT_CONFIG: dict = {
     "ultimo_modo": "texto",
@@ -30,11 +30,11 @@ DEFAULT_CONFIG: dict = {
     # `small` é bem mais preciso em PT-BR que `base`; `medium` é o próximo degrau.
     "stt_model": "small",
     "stt_language": "pt",
-    # Voz do JARVIS. Motor atual = ElevenLabs (voz "George", britânica/grave).
+    # Voz do ATLAS. Motor atual = ElevenLabs (voz "George", britânica/grave).
     # Piper (`tts_voice`) fica como fallback local quando a cota grátis acaba.
     "tts_voice": "pt_BR-faber-medium",
     # Kokoro (kokoro-onnx) — TTS local/gratuito, mais natural que o Piper. Vozes
-    # PT-BR: pm_alex/pm_santa (masc.), pf_dora (fem.). Modelos em ~/.jarvis/models/kokoro.
+    # PT-BR: pm_alex/pm_santa (masc.), pf_dora (fem.). Modelos em ~/.atlas/models/kokoro.
     "kokoro_voice": "pm_alex",
     "kokoro_lang": "pt-br",
     "kokoro_speed": 1.0,
@@ -61,7 +61,7 @@ DEFAULT_CONFIG: dict = {
     "claude_code_model": "claude-sonnet-4-6",
     "claude_code_timeout": 600,
     "claude_code_max_rounds": 3,
-    # Sistema de tarefas (banco SQLite local em ~/.jarvis/jarvis.db). Listas fixas
+    # Sistema de tarefas (banco SQLite local em ~/.atlas/atlas.db). Listas fixas
     # Trabalho (por projeto) e Pessoal, manipuladas pela IA via tool-calling.
     "tasks_enabled": True,
     # Rastreamento de tempo por projeto (mesmo banco). "começando o X" inicia
@@ -102,11 +102,11 @@ _MIGRATIONS: dict = {
 
 
 def _ensure_dir() -> None:
-    JARVIS_DIR.mkdir(parents=True, exist_ok=True)
+    ATLAS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def load_config() -> dict:
-    """Lê ~/.jarvis/config.json, criando com defaults se não existir."""
+    """Lê ~/.atlas/config.json, criando com defaults se não existir."""
     _ensure_dir()
     if not CONFIG_PATH.exists():
         save_config(DEFAULT_CONFIG)

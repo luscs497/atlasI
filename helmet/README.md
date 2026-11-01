@@ -1,12 +1,12 @@
-# JARVIS — Capacete (ESP32 ⇄ FastAPI ⇄ JARVIS)
+# ATLAS — Capacete (ESP32 ⇄ FastAPI ⇄ ATLAS)
 
 Backend que deixa o capacete do Homem de Ferro (ESP32 + microfone + 2 buzzers)
-conversar por voz com o **mesmo JARVIS do desktop**: mesma persona, mesma memória
+conversar por voz com o **mesmo ATLAS do desktop**: mesma persona, mesma memória
 de fatos, mesmas ferramentas (tarefas, tempo, finanças, hábitos, segundo cérebro,
 oráculo Claude, Perplexity em tempo real).
 
-Roda **separado** do JARVIS desktop: tem processo, venv (`helmet/.venv`), porta
-(8770) e banco (`~/.jarvis/capacete.db`) próprios. Nada no `backend/` nem no
+Roda **separado** do ATLAS desktop: tem processo, venv (`helmet/.venv`), porta
+(8770) e banco (`~/.atlas/capacete.db`) próprios. Nada no `backend/` nem no
 `electron/` foi alterado. Os dois podem rodar ao mesmo tempo.
 
 ---
@@ -19,8 +19,8 @@ Roda **separado** do JARVIS desktop: tem processo, venv (`helmet/.venv`), porta
  │ mic I2S ─► PCM 16 kHz├──binário──►│ /ws/device                                    │
  │                      │            │   VAD (webrtcvad) ─► enunciados               │
  │ buzzers ◄─ "tone"    │◄──JSON─────│   Whisper (STT local) ─► texto                │
- │ (amp I2S ◄─ PCM)     │◄──binário──│   "Jarvis"? ─► máquina de estados (2 min AFK) │
- │ botão  ─► wake/sleep │──JSON─────►│   cérebro JARVIS (gpt-4o-mini + ferramentas)  │
+ │ (amp I2S ◄─ PCM)     │◄──binário──│   "Atlas"? ─► máquina de estados (2 min AFK) │
+ │ botão  ─► wake/sleep │──JSON─────►│   cérebro ATLAS (gpt-4o-mini + ferramentas)  │
  └──────────────────────┘            │   Kokoro (TTS) ─► voz (capacete OU caixas PC) │
                                      │   SQLite/Postgres: conversas + interações     │
                                      │   OpenAI: título/descrição ao encerrar        │
@@ -41,15 +41,15 @@ Roda **separado** do JARVIS desktop: tem processo, venv (`helmet/.venv`), porta
 latência no PC, e na rede local não há ganho. Na VPS, se o upload pesar, dá pra
 adotar ADPCM 4:1 depois (o protocolo já tem o `hello` pra negociar isso).
 
-### Wake word "Jarvis": detectada no **texto**, no PC
+### Wake word "Atlas": detectada no **texto**, no PC
 
-Cada enunciado vira texto (Whisper `small`, ~1 s) e o backend procura "Jarvis"
-(com as variações que o Whisper produz: *jarves*, *djarvis*, *jarbis*…). A grande
-vantagem: **"Jarvis, que horas são?" numa frase só** ativa e já responde, sem
+Cada enunciado vira texto (Whisper `small`, ~1 s) e o backend procura "Atlas"
+(com as variações que o Whisper produz: *átlas*, *atles*, *hatlas*…). A grande
+vantagem: **"Atlas, que horas são?" numa frase só** ativa e já responde, sem
 esperar um bipe entre o nome e o pedido.
 
 Evolução possível (fase 2): wake word **no próprio ESP32-S3** com o ESP-SR/WakeNet
-(confira se há um modelo "Jarvis" para a sua placa). Aí o capacete só transmite
+(confira se há um modelo "Atlas" para a sua placa). Aí o capacete só transmite
 depois do nome, o que economiza banda e privacidade, útil na VPS. O backend não
 muda: o firmware manda `{"type":"wake"}` e começa a transmitir.
 
@@ -64,16 +64,16 @@ muda: o firmware manda `{"type":"wake"}` e começa a transmitir.
     do PCM no ritmo do tempo real.
 
 > ⚠️ **Buzzer não reproduz voz.** Buzzer (sobretudo o ativo) só faz tons. Para o
-> JARVIS falar *dentro* do capacete, adicione um **amplificador I2S MAX98357A
+> ATLAS falar *dentro* do capacete, adicione um **amplificador I2S MAX98357A
 > (~R$ 15) + alto-falante 3 W 4 Ω (28–40 mm)**. Os buzzers continuam para os bipes.
 
 ### Cérebro: o **mesmo** do desktop, usado como biblioteca
 
-`helmet/brain.py` importa o pacote `jarvis` do `backend/` e monta o `OpenAIBrain`
+`helmet/brain.py` importa o pacote `atlas` do `backend/` e monta o `OpenAIBrain`
 com as mesmas ferramentas, exceto:
 - **visualizações** e **troca de voz**: não há tela no capacete;
 - **Claude Code** (executa código sem confirmação): desligado por padrão, porque o
-  microfone fica aberto e qualquer um pode dizer "Jarvis". Liga com `HELMET_ALLOW_CODE=true`.
+  microfone fica aberto e qualquer um pode dizer "Atlas". Liga com `HELMET_ALLOW_CODE=true`.
 
 A persona ganha um adendo de **canal de voz**: respostas curtas, sem markdown,
 sem listas, sem emojis.
@@ -88,7 +88,7 @@ por conversa.
 ## 3. Regras de escuta e de conversa
 
 ```
-            "Jarvis" (ou botão)                    pedido
+            "Atlas" (ou botão)                    pedido
     IDLE ───────────────────────► LISTENING ─────────────► THINKING ──► SPEAKING
      ▲                                 ▲                                    │
      │   120 s de AFK real / "pode     └────────────────────────────────────┘
@@ -96,20 +96,20 @@ por conversa.
 ```
 
 **Escuta**
-1. **Dormindo (IDLE):** tudo que é dito é transcrito, mas só "Jarvis" faz algo.
+1. **Dormindo (IDLE):** tudo que é dito é transcrito, mas só "Atlas" faz algo.
    Nada é gravado no banco.
-2. **"Jarvis"** abre uma escuta ativa. "Jarvis" sozinho: bipe e espera o pedido.
-   "Jarvis, X": bipe e responde X na hora.
-3. **Ativo (LISTENING):** qualquer fala vira pedido (não precisa repetir "Jarvis")
+2. **"Atlas"** abre uma escuta ativa. "Atlas" sozinho: bipe e espera o pedido.
+   "Atlas, X": bipe e responde X na hora.
+3. **Ativo (LISTENING):** qualquer fala vira pedido (não precisa repetir "Atlas")
    e renova o prazo.
 4. **AFK real de 120 s:** o relógio **só corre quando nada acontece**. Fica pausado
-   enquanto você fala, enquanto há fala na fila e enquanto o JARVIS pensa ou fala.
+   enquanto você fala, enquanto há fala na fila e enquanto o ATLAS pensa ou fala.
    Ruído que o Whisper transcreve como vazio **não** renova o prazo.
 5. **Dormir antes:** "pode desligar", "é só isso", "valeu, pode dormir"… ou o
    botão (`{"type":"sleep"}`).
 6. **Queda de Wi-Fi:** o estado é por `device_id`, não por conexão. Se o capacete
    reconectar dentro do prazo, a escuta continua.
-7. **Microfone mudo enquanto o JARVIS fala** (para ele não ouvir a si mesmo). Por
+7. **Microfone mudo enquanto o ATLAS fala** (para ele não ouvir a si mesmo). Por
    isso não dá pra interromper a resposta falando por cima (*barge-in*): é uma
    evolução futura.
 
@@ -136,7 +136,7 @@ por conversa.
 | Etapa | Tempo | Observação |
 |---|---|---|
 | Fim da fala detectado (VAD) | 0,6 s | `HELMET_VAD_END_SILENCE_MS`. Menor = mais rápido, mas corta pausas no meio da frase |
-| STT Whisper `small` (padrão) | ~1,0–1,2 s | `base` ≈ 0,45 s, mas com ruído errou o próprio "Jarvis" (ouviu "Já vi") |
+| STT Whisper `small` (padrão) | ~1,0–1,2 s | `base` ≈ 0,45 s, mas com ruído errou o próprio "Atlas" (ouviu "Já vi") |
 | Cérebro gpt-4o-mini | 0,6–1,3 s | conexão aquecida enquanto você fala; picos de 2 s+ quando usa ferramentas |
 | 1º pedaço de voz (Kokoro) | 0,3–0,6 s | resposta falada frase a frase; o 1º pedaço é curto de propósito |
 | **Fim da fala → 1ª palavra** | **~2,3–3,2 s** (`small`) · **~1,6–2,5 s** (`base`) | + 0,6 s do VAD |
@@ -145,7 +145,7 @@ por conversa.
 
 | Frase | `base` | `small` |
 |---|---|---|
-| Jarvis, qual a previsão do tempo para amanhã? | "**Já vi** qual a previsão…" (não acorda) | ✔ |
+| Atlas, qual a previsão do tempo para amanhã? | "**Já vi** qual a previsão…" (não acorda) | ✔ |
 | E a da Argentina? | "E a dar gente se mexe." | ✔ |
 | Quanto eu gastei com mercado esse mês? | ✔ | ✔ |
 
@@ -167,8 +167,8 @@ escreve, uns −0,5 s) e GPU para o Whisper (`small` em <0,2 s).
 **Conexão:** `ws://<PC>:8770/ws/device?device_id=capacete-01&token=<HELMET_TOKEN>`
 (também aceita `Authorization: Bearer <token>`). Token errado: fecha com código 4401.
 
-**Achar o PC:** mDNS anuncia `jarvis.local` e o serviço `_jarvis-helmet._tcp`
-(porta + `path=/ws/device`). No ESP32: `MDNS.queryHost("jarvis")`. Alternativa:
+**Achar o PC:** mDNS anuncia `atlas.local` e o serviço `_atlas-helmet._tcp`
+(porta + `path=/ws/device`). No ESP32: `MDNS.queryHost("atlas")`. Alternativa:
 IP fixo reservado no roteador.
 
 ### ESP32 → backend
@@ -223,7 +223,7 @@ Mensagem `display` (backend → ESP32), **além** do `reply` (que não muda e tr
 | `ascii` | se `true`, **só ASCII 32–126** (acentos dobrados: á→a, ç→c; aspas curvas → `"`; travessão → `-`; `…` → `...`). Se `false`, UTF-8 (a fonte do OLED precisa ter os glifos). |
 | corte | se não coube, termina em fim de palavra com `...` (nunca no meio; só uma palavra maior que a linha inteira é partida). Números e horas ficam intactos. |
 | `ttl_ms` | quanto tempo manter na tela; depois apague (ou volte à tela de repouso). **`0` = até o próximo quadro.** |
-| `kind` | `reply` (resposta do JARVIS, ttl `HELMET_DISPLAY_TTL_MS`), `status` (`"Ouvindo..."` ao ativar, ttl 0; `"Em espera."` ao dormir, ttl 3000). |
+| `kind` | `reply` (resposta do ATLAS, ttl `HELMET_DISPLAY_TTL_MS`), `status` (`"Ouvindo..."` ao ativar, ttl 0; `"Em espera."` ao dormir, ttl 3000). |
 
 Um quadro novo sempre substitui o anterior. Se o cérebro falhar, o `reply` traz o
 texto de erro falado de sempre, e o display mostra `Nao consegui.`.
@@ -251,7 +251,7 @@ MAX98357A BCLK→GPIO15, LRC→GPIO16, DIN→GPIO17; buzzer 0→GPIO9, buzzer 1�
 (com transistor se o buzzer puxar >20 mA); botão→GPIO0/qualquer com pull-up.
 
 **Estrutura (Arduino-ESP32 ou ESP-IDF, FreeRTOS)**
-1. **Wi-Fi** com reconexão automática; resolve `jarvis.local` (mDNS) ou IP fixo.
+1. **Wi-Fi** com reconexão automática; resolve `atlas.local` (mDNS) ou IP fixo.
 2. **WebSocket** (lib `links2004/arduinoWebSockets` ou `esp_websocket_client`) com
    reconexão a cada 2 s. Ao conectar, manda `hello`.
 3. **Task do mic** (core 1): `i2s_read` em blocos de 20–40 ms. O INMP441 entrega
@@ -278,7 +278,7 @@ referência do protocolo. O firmware deve se comportar igual a ele.
 python3 -m venv helmet/.venv && helmet/.venv/bin/pip install -r helmet/requirements.txt
 
 # subir (porta 8770, todas as interfaces da rede local)
-scripts/jarvis-capacete
+scripts/atlas-capacete
 ```
 
 O token do firmware é o `HELMET_TOKEN` do `.env` da raiz (já gerado). Se o
@@ -289,11 +289,11 @@ firewall estiver ativo: `sudo ufw allow 8770/tcp`.
 # falando no microfone do PC
 helmet/.venv/bin/python helmet/tools/simulador.py --mic
 # frases sintetizadas, sem falar
-helmet/.venv/bin/python helmet/tools/simulador.py --say "Jarvis, que horas são?"
+helmet/.venv/bin/python helmet/tools/simulador.py --say "Atlas, que horas são?"
 # simulando capacete com alto-falante (áudio volta pelo WebSocket e toca no PC)
-helmet/.venv/bin/python helmet/tools/simulador.py --speaker --play --say "Jarvis, bom dia"
+helmet/.venv/bin/python helmet/tools/simulador.py --speaker --play --say "Atlas, bom dia"
 # simulando capacete com display I2C (desenha cada quadro numa caixinha ASCII)
-helmet/.venv/bin/python helmet/tools/simulador.py --display 16x2 --say "Jarvis, oi"
+helmet/.venv/bin/python helmet/tools/simulador.py --display 16x2 --say "Atlas, oi"
 ```
 
 **Testes automatizados** (91 testes: wake word, VAD, regras de conversa, AFK,
@@ -302,20 +302,20 @@ limite, resumo, reconexão, stream de áudio, auth, display, inglês, filtros do
 cd helmet && .venv/bin/python -m pytest -q
 ```
 
-**Iniciar com o sistema** (systemd de usuário), em `~/.config/systemd/user/jarvis-capacete.service`:
+**Iniciar com o sistema** (systemd de usuário), em `~/.config/systemd/user/atlas-capacete.service`:
 ```ini
 [Unit]
-Description=JARVIS capacete
+Description=ATLAS capacete
 After=network-online.target sound.target
 
 [Service]
-ExecStart=%h/projetos/jarvis-v2/scripts/jarvis-capacete
+ExecStart=%h/projetos/atlasI/scripts/atlas-capacete
 Restart=on-failure
 
 [Install]
 WantedBy=default.target
 ```
-Depois: `systemctl --user enable --now jarvis-capacete`.
+Depois: `systemctl --user enable --now atlas-capacete`.
 
 ## 8. API
 
@@ -350,7 +350,7 @@ interativa em `http://localhost:8770/docs`.
 | `HELMET_VAD_MIN_RMS` | 200 | piso de energia (ajuste ao ganho do mic) |
 | `HELMET_ALLOW_CODE` | false | Claude Code por voz |
 | `HELMET_BRAIN_MODEL` | (vazio) | modelo OpenAI só do capacete; vazio = o do desktop |
-| `HELMET_DATABASE_URL` | sqlite `~/.jarvis/capacete.db` | |
+| `HELMET_DATABASE_URL` | sqlite `~/.atlas/capacete.db` | |
 | `HELMET_LANGUAGE` | pt | `pt` \| `en`. `en`: você fala inglês, ele responde em inglês britânico no estilo do filme (o desktop não muda) |
 | `HELMET_TTS_VOICE` / `HELMET_TTS_LANG` | (padrão do idioma) | voz Kokoro do capacete; `en` usa `bm_daniel` / `en-gb` |
 | `HELMET_INPUT_HIGHPASS_HZ` | 200 | passa-alta antes do VAD/Whisper (tira zumbido 60/120 Hz do mic); 0 desliga |
@@ -369,17 +369,17 @@ interativa em `http://localhost:8770/docs`.
 - `HELMET_REPLY_AUDIO=device` (na VPS não há caixa de som).
 - CPU da VPS: Whisper `base` precisa de ~2 vCPUs para ~0,5 s. Alternativa: trocar
   o STT por API (OpenAI `gpt-4o-mini-transcribe`): a interface é só `transcribe_pcm()`.
-- Ferramentas que dependem do PC (Claude Code, `~/.jarvis/jarvis.db` local) passam
+- Ferramentas que dependem do PC (Claude Code, `~/.atlas/atlas.db` local) passam
   a ser da VPS. Os fatos e o banco de tarefas teriam que ser migrados junto.
 - Considere a wake word no ESP32-S3 (seção 2) para não transmitir áudio 24 h pela internet.
 
 ## 11. Limitações conhecidas
 
-- **Sem barge-in:** não dá pra interromper o JARVIS falando por cima.
+- **Sem barge-in:** não dá pra interromper o ATLAS falando por cima.
 - **Fatos novos vs. desktop:** se o desktop estiver aberto e aprender um fato, ele
   regrava o `memoria.json` com a lista que tem em memória, e pode descartar um fato
   que o capacete aprendeu nesse meio-tempo. O contrário não acontece: o capacete
-  sempre mescla. Corrigir exige uma mudança pequena no `backend/jarvis/memory.py`
+  sempre mescla. Corrigir exige uma mudança pequena no `backend/atlas/memory.py`
   (mesclar ao salvar), que não foi feita para não mexer no desktop.
 - Latência dominada por CPU (Whisper `small` ~1 s). Com GPU NVIDIA, o Whisper cai
   para ~0,2 s (`device="cuda"` em `audio/stt.py`).
@@ -406,7 +406,7 @@ helmet/
 │   ├── runtime.py          # ★ máquina de estados por capacete (escuta, AFK, fala)
 │   ├── conversations.py    # ★ regras de conversa/limite/resumo/recuperação
 │   ├── db.py               # modelos SQLAlchemy (async)
-│   ├── wake.py             # "Jarvis" + comandos de dormir
+│   ├── wake.py             # "Atlas" + comandos de dormir
 │   ├── brain.py            # ponte com o cérebro do desktop + memória de fatos + adendo voz/display
 │   ├── display.py          # LCD/OLED: quebra em cols x rows, ASCII, corte com "..."
 │   ├── summarizer.py       # título/descrição via OpenAI

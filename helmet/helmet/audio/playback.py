@@ -20,7 +20,7 @@ class PcPlayer:
     async def start(self) -> None:
         self._proc = await asyncio.create_subprocess_exec(
             "paplay", "--raw", "--format=s16le", f"--rate={self.sample_rate}",
-            "--channels=1", "--client-name=jarvis-capacete",
+            "--channels=1", "--client-name=atlas-capacete",
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.DEVNULL,
             stderr=asyncio.subprocess.DEVNULL,

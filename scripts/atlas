@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Launcher do JARVIS v2. Crie um alias global apontando para este arquivo:
-#   echo "alias jarvis='$HOME/projetos/jarvis-v2/scripts/jarvis'" >> ~/.bashrc
+# Launcher do ATLAS I. Crie um alias global apontando para este arquivo:
+#   echo "alias atlas='$HOME/projetos/atlasI/scripts/atlas'" >> ~/.bashrc
 set -euo pipefail
 
 # Diretório raiz do projeto (um nível acima de scripts/).

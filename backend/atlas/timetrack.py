@@ -1,9 +1,9 @@
 """
-Rastreamento de tempo do JARVIS.
+Rastreamento de tempo do ATLAS.
 
 O usuário controla por voz quanto tempo dedica a cada projeto:
 
-    "Jarvis, começando o Stamflow"   -> inicia um cronômetro no projeto
+    "Atlas, começando o Stamflow"   -> inicia um cronômetro no projeto
     "parei" / "terminei"             -> encerra o cronômetro em andamento
     "quanto tempo essa semana?"      -> relatório de tempo real por projeto
 
@@ -12,7 +12,7 @@ automaticamente o anterior (é raro querer dois ao mesmo tempo, e evita timers
 esquecidos rodando). O tempo "em andamento" conta até agora — o relatório soma o
 tempo real por projeto no período (semana atual por padrão).
 
-Persiste no banco compartilhado `~/.jarvis/jarvis.db` (ver `jarvis.db`), a mesma
+Persiste no banco compartilhado `~/.atlas/atlas.db` (ver `atlas.db`), a mesma
 fundação das tarefas. Reaproveite os nomes de projeto conhecidos (Trabalho).
 """
 
@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from jarvis.db import connect
+from atlas.db import connect
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS time_entries (

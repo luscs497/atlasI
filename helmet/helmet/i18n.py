@@ -1,9 +1,9 @@
 """
 Idioma do capacete (`HELMET_LANGUAGE`): textos fixos, prompt do Whisper e voz
-padrão. O JARVIS do desktop não muda: o idioma vale só para o capacete.
+padrão. O ATLAS do desktop não muda: o idioma vale só para o capacete.
 
 O prompt-base do cérebro (do desktop) é em português; no capacete em inglês, o
-adendo de canal manda o GPT responder SEMPRE em inglês, no estilo do JARVIS.
+adendo de canal manda o GPT responder SEMPRE em inglês, no estilo do ATLAS.
 """
 
 from __future__ import annotations
@@ -14,8 +14,8 @@ Lang = Literal["pt", "en"]
 
 TEXTS: dict[str, dict[str, str]] = {
     "pt": {
-        "stt_prompt": "Conversa em português do Brasil com o assistente pessoal JARVIS. "
-                      "Jarvis, que horas são?",
+        "stt_prompt": "Conversa em português do Brasil com o assistente pessoal ATLAS. "
+                      "Atlas, que horas são?",
         "error_reply": "Tive um problema para processar isso agora, senhor. "
                        "Tente de novo em instantes.",
         "empty_reply": "Desculpe, senhor, não consegui formular uma resposta.",
@@ -25,8 +25,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "warmup": "Pronto.",
     },
     "en": {
-        "stt_prompt": "A conversation in English with the personal assistant JARVIS. "
-                      "Jarvis, what time is it?",
+        "stt_prompt": "A conversation in English with the personal assistant ATLAS. "
+                      "Atlas, what time is it?",
         "error_reply": "I'm afraid I ran into a problem, sir. Please try again in a moment.",
         "empty_reply": "My apologies, sir, I couldn't come up with an answer.",
         "display_error": "Couldn't do it.",

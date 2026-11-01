@@ -1,26 +1,26 @@
 """
-Sistema de tarefas do JARVIS.
+Sistema de tarefas do ATLAS.
 
 Duas listas FIXAS, conforme o escopo do usuário:
 
 - **Pessoal** — tarefas soltas, sem projeto.
 - **Trabalho** — sempre dividida por PROJETO. Uma tarefa de trabalho pertence a
-  um projeto (ex.: 'stamflow', 'jarvis-v2').
+  um projeto (ex.: 'stamflow', 'atlasI').
 
 Regras de convívio (a decisão de "onde encaixar" mora no cérebro/persona, não
-aqui): o JARVIS identifica um projeto existente e adiciona nele; só cria projeto
+aqui): o ATLAS identifica um projeto existente e adiciona nele; só cria projeto
 novo quando o usuário mandar explicitamente; e, se ficar em dúvida, pergunta
 antes de agir. Este módulo só oferece as operações determinísticas e uma forma
 de listar os projetos existentes (para o cérebro decidir com base em fatos).
 
-Persiste no banco compartilhado `~/.jarvis/jarvis.db` (ver `jarvis.db`).
+Persiste no banco compartilhado `~/.atlas/atlas.db` (ver `atlas.db`).
 """
 
 from __future__ import annotations
 
 from datetime import datetime
 
-from jarvis.db import connect
+from atlas.db import connect
 
 LISTAS = ("trabalho", "pessoal")
 

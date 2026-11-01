@@ -112,7 +112,7 @@ async def _device_control(rt, link: WsLink, data: dict) -> None:  # noqa: ANN001
         await link.send_json({"type": "pong", "t": data.get("t")})
     elif kind == "playback_done":
         rt.playback_done(int(data.get("seq", 0)))
-    elif kind == "wake":  # botão físico no capacete: ativa sem dizer "Jarvis"
+    elif kind == "wake":  # botão físico no capacete: ativa sem dizer "Atlas"
         await rt.activate(None, reason="button")
     elif kind == "sleep":
         await rt.deactivate("button")
@@ -170,7 +170,7 @@ async def list_devices(request: Request) -> list[dict]:
 
 class TextIn(BaseModel):
     text: str = Field(min_length=1, max_length=4000)
-    # true = trata como se o capacete já estivesse ativo (dispensa o "Jarvis")
+    # true = trata como se o capacete já estivesse ativo (dispensa o "Atlas")
     force_active: bool = False
 
 
@@ -271,7 +271,7 @@ async def get_interactions(
         )).all()
     return [
         {"id": i.id, "session_id": i.session_id, "created_at": iso(i.created_at),
-         "source": i.source, "user": i.user_text, "jarvis": i.assistant_text,
+         "source": i.source, "user": i.user_text, "atlas": i.assistant_text,
          "size_bytes": i.size_bytes, "audio_ms": i.audio_ms, "stt_ms": i.stt_ms,
          "brain_ms": i.brain_ms, "tts_first_ms": i.tts_first_ms,
          "total_ms": i.total_ms, "error": i.error}

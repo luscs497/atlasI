@@ -1,4 +1,4 @@
-"""Torna o pacote `jarvis` (backend do desktop) importável aqui, sem copiá-lo."""
+"""Torna o pacote `atlas` (backend do desktop) importável aqui, sem copiá-lo."""
 
 import sys
 

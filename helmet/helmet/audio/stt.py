@@ -1,7 +1,7 @@
 """
 STT do capacete — faster-whisper sobre PCM cru (sem contêiner, sem decodificar).
 
-Mesmos modelos do JARVIS desktop (`~/.jarvis/models/whisper`), mas configurado
+Mesmos modelos do ATLAS desktop (`~/.atlas/models/whisper`), mas configurado
 para LATÊNCIA: beam guloso, sem VAD interno (o `Segmenter` já cortou a fala) e
 sem timestamps. Inclui um filtro contra as "alucinações" clássicas do Whisper em
 ruído ("Obrigado.", "Legendas pela comunidade Amara.org"…).
@@ -17,11 +17,11 @@ from pathlib import Path
 
 from helmet.audio.resample import pcm_to_float, resample_pcm
 
-MODELS_DIR = Path.home() / ".jarvis" / "models" / "whisper"
+MODELS_DIR = Path.home() / ".atlas" / "models" / "whisper"
 
 PROMPT = (
-    "Conversa em português do Brasil com o assistente pessoal JARVIS. "
-    "Jarvis, que horas são?"
+    "Conversa em português do Brasil com o assistente pessoal ATLAS. "
+    "Atlas, que horas são?"
 )
 
 # O Whisper às vezes "transcreve" o próprio prompt sobre silêncio.

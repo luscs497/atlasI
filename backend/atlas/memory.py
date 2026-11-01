@@ -1,13 +1,13 @@
 """
-Memória de longo prazo do JARVIS.
+Memória de longo prazo do ATLAS.
 
 Dá continuidade entre sessões. Dois tipos de memória, ambos em
-`~/.jarvis/memoria.json`:
+`~/.atlas/memoria.json`:
 
 - **Episódica** (`historico`): as últimas trocas da conversa. Recarregadas no
-  boot para o JARVIS não "esquecer" o assunto ao reiniciar o backend.
+  boot para o ATLAS não "esquecer" o assunto ao reiniciar o backend.
 - **Semântica** (`fatos`): fatos duráveis sobre o usuário (onde mora, projetos,
-  preferências). Injetados na persona para o JARVIS lembrar entre sessões.
+  preferências). Injetados na persona para o ATLAS lembrar entre sessões.
 
 Escrita atômica (arquivo temporário + rename) para nunca corromper o JSON se o
 processo cair no meio de um save. Assistente de usuário único: uma instância,
@@ -21,7 +21,7 @@ import os
 import time
 from pathlib import Path
 
-from jarvis.config import MEMORY_PATH
+from atlas.config import MEMORY_PATH
 
 # Limites para o arquivo não crescer sem controle. O histórico é uma janela
 # rolante; os fatos são poucos e curtos por natureza.
@@ -74,7 +74,7 @@ class Memory:
     # ---- histórico (episódico) ------------------------------------------
 
     def add_turn(self, role: str, texto: str) -> None:
-        """Registra uma fala (`role`: 'user' ou 'jarvis') e apara a janela."""
+        """Registra uma fala (`role`: 'user' ou 'atlas') e apara a janela."""
         texto = (texto or "").strip()
         if not texto:
             return

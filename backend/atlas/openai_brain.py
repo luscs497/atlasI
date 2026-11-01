@@ -1,7 +1,7 @@
 """
-Cérebro do JARVIS via API da OpenAI (ChatGPT).
+Cérebro do ATLAS via API da OpenAI (ChatGPT).
 
-Espelho do `jarvis.gemini.GeminiBrain`: mesma interface (`reply`, `proactive`,
+Espelho do `atlas.gemini.GeminiBrain`: mesma interface (`reply`, `proactive`,
 `reset`, `from_config`), mesma persona e a mesma memória de longo prazo — só troca
 o provedor. Serve como cérebro "barato mas bom" (modelo `gpt-4o-mini` por padrão)
 enquanto o alvo final (Claude Haiku 4.5) não entra.
@@ -23,7 +23,7 @@ import re
 
 from openai import AsyncOpenAI
 
-from jarvis.memory import Memory
+from atlas.memory import Memory
 
 # Gatilhos de comando explícito (início da fala do usuário). Iguais aos do Gemini.
 _REMEMBER_RE = re.compile(
@@ -320,7 +320,8 @@ def _system_prompt(
     can_voice: bool = False,
 ) -> str:
     base = (
-        f"Você é o JARVIS, o assistente pessoal de {usuario_nome}, inspirado no "
+        f"Você é o ATLAS (Autonomous Technology, Logic & Assistance System), o "
+        f"assistente pessoal de {usuario_nome}, inspirado no "
         "assistente do Homem de Ferro. Fale em português do Brasil. Quando for "
         "natural se dirigir ao usuário, trate-o apenas por 'senhor' — nunca "
         "'senhor {nome}'. Não force o 'senhor' em toda frase: use com parcimônia, "
@@ -505,7 +506,7 @@ class OpenAIBrain:
 
     async def reply(self, text: str, on_action=None, on_visualization=None) -> str:
         """
-        Envia uma mensagem do usuário e devolve a resposta do JARVIS.
+        Envia uma mensagem do usuário e devolve a resposta do ATLAS.
 
         Se o modelo decidir que o pedido é uma AÇÃO de código, ele chama a
         ferramenta do Claude Code (loop de tool-calling); o `on_action` opcional
@@ -525,7 +526,7 @@ class OpenAIBrain:
             self._messages.append({"role": "user", "content": text})
             self._messages.append({"role": "assistant", "content": parada})
             self._trim()
-            self.memory.add_turn("jarvis", parada)
+            self.memory.add_turn("atlas", parada)
             self.memory.save()
             return parada
 
@@ -588,7 +589,7 @@ class OpenAIBrain:
 
         self._messages.append({"role": "assistant", "content": reply})
         self._trim()
-        self.memory.add_turn("jarvis", reply)
+        self.memory.add_turn("atlas", reply)
         self.memory.save()
 
         # Extrai fatos só de conversas comuns (não de comandos nem de ações).
@@ -669,7 +670,7 @@ class OpenAIBrain:
                 "function": {
                     "name": "definir_voz",
                     "description": (
-                        "Troca a VOZ (TTS) do JARVIS em runtime, de forma grudenta. "
+                        "Troca a VOZ (TTS) do ATLAS em runtime, de forma grudenta. "
                         "Use quando o senhor pedir para mudar a voz, o timbre ou o "
                         "motor de fala. Não use para conversa comum."
                     ),
@@ -757,7 +758,7 @@ class OpenAIBrain:
                                 "type": "string",
                                 "description": (
                                     "Nome da subpasta do projeto (em ~/projetos) onde "
-                                    "rodar, ex.: 'jarvis-v2'. Vazio se o usuário não "
+                                    "rodar, ex.: 'atlasI'. Vazio se o usuário não "
                                     "citou um projeto existente."
                                 ),
                             },
@@ -1573,7 +1574,7 @@ class OpenAIBrain:
 
         try:
             if name in ("mostrar_design", "mostrar_visualizacao"):
-                from jarvis.visualizacoes import normalizar_spec
+                from atlas.visualizacoes import normalizar_spec
 
                 if name == "mostrar_design":
                     bruto = {"tipo": "html", "titulo": args.get("titulo", ""),
@@ -1590,7 +1591,7 @@ class OpenAIBrain:
                         "salvo_como": salvar or None}
 
             if name == "grafico_da_serie":
-                from jarvis.visualizacoes import normalizar_spec
+                from atlas.visualizacoes import normalizar_spec
 
                 if not self._last_serie:
                     return {"ok": False,
@@ -1811,7 +1812,7 @@ class OpenAIBrain:
             '{"fatos": ["..."]} com strings curtas em português na 3ª pessoa '
             '(ex.: {"fatos": ["Mora em Porto Alegre"]}). '
             'Se não houver nada digno de nota, responda {"fatos": []}.\n\n'
-            f"Usuário: {user_text}\nJARVIS: {reply_text}"
+            f"Usuário: {user_text}\nATLAS: {reply_text}"
         )
         try:
             async with self._lock:
@@ -1849,9 +1850,9 @@ class OpenAIBrain:
 
     async def proactive(self, contexto: str = "") -> str:
         """
-        JARVIS puxa a conversa por conta própria (proatividade). Não é fala do
+        ATLAS puxa a conversa por conta própria (proatividade). Não é fala do
         usuário: mandamos uma instrução de sistema pedindo uma iniciativa breve
-        e natural, e persistimos só a resposta como turno do JARVIS (a instrução
+        e natural, e persistimos só a resposta como turno do ATLAS (a instrução
         em si não entra no histórico vivo nem na memória).
         """
         instrucao = (
@@ -1881,10 +1882,10 @@ class OpenAIBrain:
         text = (response.choices[0].message.content or "").strip()
         if not text:
             return ""
-        # Só a resposta do JARVIS é persistida (a instrução é descartada).
+        # Só a resposta do ATLAS é persistida (a instrução é descartada).
         self._messages.append({"role": "assistant", "content": text})
         self._trim()
-        self.memory.add_turn("jarvis", text)
+        self.memory.add_turn("atlas", text)
         self.memory.save()
         return text
 
